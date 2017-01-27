@@ -1,4 +1,4 @@
-module Tests2.D3Elm.Hierarchy.Tree.Tree exposing (..)
+module TestD3Elm.D3Elm.Hierarchy.Tree.Tree exposing (..)
 
 import Test exposing (..)
 import Expect

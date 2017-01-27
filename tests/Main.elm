@@ -1,6 +1,6 @@
 port module Main exposing (..)
 
-import Tests2.D3Elm.Hierarchy.Tree.Tree as Tree
+import TestD3Elm.D3Elm.Hierarchy.Tree.Tree as Tree
 import Test.Runner.Node exposing (run, TestProgram)
 import Json.Encode exposing (Value)
 
