@@ -5,7 +5,7 @@ import Expect
 import Fuzz exposing (list, int, tuple, string)
 import String
 import Lazy as L
-import List exposing (reverse, all)
+import List exposing (reverse, all, map, concat)
 
 
 import D3Elm.Hierarchy.Tree.Tree exposing (..)
@@ -24,19 +24,18 @@ type Node d =
 
 -}
 
-mkNodeInfo d = NodeInfo d 0 0
+mkNodeInfo d h = NodeInfo d 0 h
 
 node = let
-        noParent = (L.lazy (\() -> Nothing))
-        c = Leaf 1 noParent (mkNodeInfo "C")
-        e = Leaf 2 noParent (mkNodeInfo "E")
-        d = Node 3 noParent (mkNodeInfo "D") [c,e]
-        a = Leaf 4 noParent (mkNodeInfo "A")
-        b = Node 5 noParent (mkNodeInfo "B") [a,d]
-        h = Leaf 6 noParent (mkNodeInfo "H")
-        i = Node 7 noParent (mkNodeInfo "I") [h]
-        g = Node 8 noParent (mkNodeInfo "G") [i]
-        f = Node 9 noParent (mkNodeInfo "F") [b,g]
+        c = Leaf 1 (mkNodeInfo "C" 0)
+        e = Leaf 2 (mkNodeInfo "E" 0)
+        d = Node 3 (mkNodeInfo "D" 1) [c,e]
+        a = Leaf 4 (mkNodeInfo "A" 0)
+        b = Node 5 (mkNodeInfo "B" 2) [a,d]
+        h = Leaf 6 (mkNodeInfo "H" 0)
+        i = Node 7 (mkNodeInfo "I" 1) [h]
+        g = Node 8 (mkNodeInfo "G" 2) [i]
+        f = Node 9 (mkNodeInfo "F" 3) [b,g]
     in f
 
 
@@ -48,6 +47,7 @@ all =
           , test "foldPostOrder" <| testFoldPostOrder
           , test "foldPreOrder" <| testFoldPreOrder
           , test "buildTree" <| testBuildTree
+          , test "computeHeight" <| testComputeHeight
         ]
 
 
@@ -68,17 +68,25 @@ testFoldPreOrder () = let
 testBuildTree () =
   let fchildren n =
         case n of
-        (Node _ _ _ cs) -> cs
+        (Node _ _ cs) -> cs
         _ -> []
       fvalue n =
         case n of
-        (Node _ _ info _) -> info.nodeData
-        (Leaf _ _ info) -> info.nodeData
+        (Node _ info _) -> info.nodeData
+        (Leaf _ info) -> info.nodeData
       t1 = buildTree node fvalue fchildren
       t2 = buildTree t1 fvalue fchildren
       t3 = buildTree t2 fvalue fchildren
   in Expect.true "" <| nodeStructEq t2 t3
 
+
+testComputeHeight () =
+  let t1s = computeHeight node
+      t2s = List.concat <| map computeHeight t1s
+      t3s = List.concat <| map computeHeight t2s
+--      r = map
+  in Expect.equal t2s t3s
+  --Expect.true "" True -- <| nodeStructEq t2 t3
 
 nodeStructEq : Node d -> Node d -> Bool
 nodeStructEq a b =
@@ -88,8 +96,8 @@ nodeStructEq a b =
           (a::ra, b::rb) -> nodeStructEq a b && eqList ra rb
           _ -> False
   in case (a,b) of
-      (Leaf i1 _ info1, Leaf i2 _ info2) -> i1 == i2 && info1 == info2
-      (Node i1 _ info1 cs1, Node i2 _ info2 cs2) ->
+      (Leaf i1 info1, Leaf i2 info2) -> i1 == i2 && info1 == info2
+      (Node i1 info1 cs1, Node i2 info2 cs2) ->
         let b1 = i1 == i2 && info1 == info2
         in  if b1
             then eqList cs1 cs2
