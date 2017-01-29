@@ -3,7 +3,7 @@ module D3Elm.Hierarchy.Tree.Tree exposing (..)
 import Lazy as L
 import List exposing (append, foldl, reverse, maximum, map, head)
 import Dict as D exposing (insert, empty, Dict, get)
-
+import Maybe exposing (withDefault)
 
 type alias NodeInfo data = {
   nodeData : data
@@ -104,6 +104,16 @@ getDescendants : Node d -> List (Node d)
 getDescendants node =
   let proc acc n = n::acc
   in foldBreadthFirst proc [] node
+
+sum : (Node d -> a) -> (a -> a -> a) -> a -> Node d -> Dict Int a
+sum f add zero node =
+  let proc acc n =
+        case n of
+          (Leaf i _ as n) -> D.insert i (f n) acc
+          (Node i _ cs as n) ->
+            let s = foldl (\n s -> add s (withDefault zero <| D.get (getIndex n) acc)) (f n) cs
+            in D.insert i s acc
+  in foldPostOrder proc empty node
 
 foldBreadthFirst : (acc -> Node d -> acc) -> acc -> Node d -> acc
 foldBreadthFirst f acc node =

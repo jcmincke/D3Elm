@@ -52,6 +52,7 @@ all =
           , test "findNodes" <| testFindNodes
           , test "getAncestors" <| testGetAncestors
           , test "testGetDescendants" <| testGetDescendants
+          , test "sum" <| testSum
 
 
         ]
@@ -94,6 +95,9 @@ testGetDescendants () =
   let r = reverse <| map getData <| getDescendants node
   in Expect.equal r ["F", "B", "G", "A", "D", "I", "C", "E", "H"]
 
+testSum () =
+  let r = sum getIndex (+) 0 node
+  in Expect.equal (D.get 9 r) (Just 45)
 
 testBuildTree () =
   let fchildren n =
