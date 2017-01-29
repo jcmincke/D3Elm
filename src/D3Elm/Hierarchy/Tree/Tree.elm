@@ -2,7 +2,7 @@ module D3Elm.Hierarchy.Tree.Tree exposing (..)
 
 import Lazy as L
 import List exposing (append, foldl, reverse, maximum, map, head)
-import Dict exposing (insert, empty, Dict)
+import Dict as D exposing (insert, empty, Dict, get)
 
 
 type alias NodeInfo data = {
@@ -36,6 +36,14 @@ getDepth n = (getInfo n).nodeDepth
 getHeight : Node d -> Int
 getHeight n = (getInfo n).nodeHeight
 
+findNodes : (Node d -> Bool) -> Node d -> List (Node d)
+findNodes pred node =
+  let proc acc n =
+    if pred n
+    then n::acc
+    else acc
+  in foldPreOrder proc [] node
+
 -- construct a Node
 
 buildTree : a -> (a -> d) -> (a -> List a) -> Node d
@@ -50,13 +58,13 @@ buildTree a fvalue fchildren =
         in n
   in proc 0 0 a
 
-parents : Node d -> Dict Int (Node d)
-parents n =
+getParents : Node d -> Dict Int (Node d)
+getParents n =
   let proc acc n =
     case n of
       (Leaf _ _) -> acc
-      (Node i _ cs) -> foldl (\c acc -> insert (getIndex c) n acc) acc cs
-  in foldBreadthFirst proc empty n
+      (Node i _ cs) -> foldl (\c acc1 -> insert (getIndex c) n acc1) acc cs
+  in foldPostOrder proc empty n
 
 
 computeHeight : Node d -> Node d
@@ -74,8 +82,28 @@ computeHeight node =
           Nothing -> 0
   in proc node
 
+getLeaves : Node d -> List (Node d)
+getLeaves node =
+  let proc acc n =
+    case n of
+      (Leaf _ _ as l) -> l::acc
+      (Node _ _ _) -> acc
+  in foldPostOrder proc [] node
 
 
+getAncestors : Dict Int (Node d) -> Node d -> List (Node d)
+getAncestors parents node =
+  let proc acc n =
+        let i = getIndex n
+        in case D.get i parents of
+            Just p -> proc (p::acc) p
+            Nothing -> acc
+  in proc [] node
+
+getDescendants : Node d -> List (Node d)
+getDescendants node =
+  let proc acc n = n::acc
+  in foldBreadthFirst proc [] node
 
 foldBreadthFirst : (acc -> Node d -> acc) -> acc -> Node d -> acc
 foldBreadthFirst f acc node =

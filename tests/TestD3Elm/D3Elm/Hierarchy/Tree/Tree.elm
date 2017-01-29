@@ -5,6 +5,7 @@ import Expect
 import Fuzz exposing (list, int, tuple, string)
 import String
 import List as L exposing (reverse, all, map, concat)
+import Dict as D exposing (isEmpty, Dict, get)
 
 
 import D3Elm.Hierarchy.Tree.Tree exposing (..)
@@ -47,8 +48,17 @@ all =
           , test "foldPreOrder" <| testFoldPreOrder
           , test "buildTree" <| testBuildTree
           , test "computeHeight" <| testComputeHeight
+          , test "getLeaves" <| testGetLeaves
+          , test "findNodes" <| testFindNodes
+          , test "getAncestors" <| testGetAncestors
+          , test "testGetDescendants" <| testGetDescendants
+
+
         ]
 
+testFindNodes () = let
+    r = map getData <| findNodes (\n -> getIndex n == 4) node
+  in Expect.equal r ["A"]
 
 testFoldBreadthFirst () = let
     r = reverse <| foldBreadthFirst (\acc n -> getData n::acc) [] node
@@ -64,6 +74,25 @@ testFoldPostOrder () = let
 testFoldPreOrder () = let
     r = reverse <| foldPreOrder (\acc n -> getData n::acc) [] node
   in Expect.equal r ["F", "B", "A", "D", "C", "E", "G", "I", "H"]
+
+
+testGetLeaves () = let
+    r = reverse <| map getData <| getLeaves node
+  in Expect.equal r ["A", "C", "E", "H"]
+
+
+
+testGetAncestors () =
+    case findNodes (\n -> getIndex n == 6) node of
+      [n] ->
+        let parents = getParents node
+            r = reverse <| map getData <| getAncestors parents n
+        in Expect.equal r ["I", "G", "F"]
+      _ -> Expect.equal  1 2
+
+testGetDescendants () =
+  let r = reverse <| map getData <| getDescendants node
+  in Expect.equal r ["F", "B", "G", "A", "D", "I", "C", "E", "H"]
 
 
 testBuildTree () =
