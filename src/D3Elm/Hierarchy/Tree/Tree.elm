@@ -115,6 +115,14 @@ sum f add zero node =
             in D.insert i s acc
   in foldPostOrder proc empty node
 
+count : Node d -> Dict Int Int
+count node =
+  let proc n =
+    case n of
+      (Leaf _ _) -> 1
+      (Node _ _ _) -> 0
+  in sum proc (+) 0 node
+
 foldBreadthFirst : (acc -> Node d -> acc) -> acc -> Node d -> acc
 foldBreadthFirst f acc node =
   let proc acc nodes =

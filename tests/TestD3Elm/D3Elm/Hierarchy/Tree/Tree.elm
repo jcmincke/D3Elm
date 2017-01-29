@@ -53,6 +53,7 @@ all =
           , test "getAncestors" <| testGetAncestors
           , test "testGetDescendants" <| testGetDescendants
           , test "sum" <| testSum
+          , test "count" <| testCount
 
 
         ]
@@ -98,6 +99,11 @@ testGetDescendants () =
 testSum () =
   let r = sum getIndex (+) 0 node
   in Expect.equal (D.get 9 r) (Just 45)
+
+
+testCount () =
+  let r = count node
+  in Expect.equal (D.get 9 r) (Just 4)
 
 testBuildTree () =
   let fchildren n =
