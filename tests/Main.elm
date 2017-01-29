@@ -1,13 +1,24 @@
 port module Main exposing (..)
 
-import TestD3Elm.D3Elm.Hierarchy.Tree.Tree as Tree
+import Test exposing (..)
+
+
 import Test.Runner.Node exposing (run, TestProgram)
 import Json.Encode exposing (Value)
 
+import TestD3Elm.D3Elm.Hierarchy.Tree.Tree as Tree
+import TestD3Elm.D3Elm.Hierarchy.Cluster as Cluster
+
+allTests : Test
+allTests =
+  describe "D3" [
+    Tree.all
+    , Cluster.all
+    ]
 
 main : TestProgram
 main =
-    run emit Tree.all
+    run emit allTests -- Tree.all
 
 
 port emit : ( String, Value ) -> Cmd msg

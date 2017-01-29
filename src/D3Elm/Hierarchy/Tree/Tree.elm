@@ -36,6 +36,12 @@ getDepth n = (getInfo n).nodeDepth
 getHeight : Node d -> Int
 getHeight n = (getInfo n).nodeHeight
 
+getChildren : Node d -> List (Node d)
+getChildren node =
+  case node of
+    Leaf _ _ -> []
+    Node _ _ cs -> cs
+
 findNodes : (Node d -> Bool) -> Node d -> List (Node d)
 findNodes pred node =
   let proc acc n =
