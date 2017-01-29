@@ -59,20 +59,20 @@ parents n =
   in foldBreadthFirst proc empty n
 
 
-computeHeight : Node d -> List (Node d)
+computeHeight : Node d -> Node d
 computeHeight node =
-  let proc acc n =
+  let proc n =
         case n of
-          (Leaf i info) -> Leaf i {info | nodeHeight = 0}::acc
+          (Leaf i info) -> Leaf i {info | nodeHeight = 0}
           (Node i info cs) ->
-            let h = maxHeight acc
-            in [Node i {info | nodeHeight = h+1} (reverse acc)]
+            let cs1 = map proc cs
+                h = maxHeight cs1
+            in Node i {info | nodeHeight = h+1} cs1
       maxHeight nodes =
          case maximum <| map getHeight nodes of
           Just h -> h
           Nothing -> 0
-      r = foldPostOrder proc [] node
-  in r
+  in proc node
 
 
 
@@ -96,6 +96,7 @@ foldPostOrder f acc node =
         let acc1 = foldl (\n lacc -> proc lacc n) acc children
         in f acc1 n
   in proc acc node
+
 
 
 foldPreOrder : (acc -> Node d -> acc) -> acc -> Node d -> acc
