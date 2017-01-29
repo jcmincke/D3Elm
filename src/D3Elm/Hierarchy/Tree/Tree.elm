@@ -1,7 +1,7 @@
 module D3Elm.Hierarchy.Tree.Tree exposing (..)
 
 import Lazy as L
-import List exposing (append, foldl, reverse, maximum, map, head)
+import List exposing (append, foldl, reverse, maximum, map, head, sortWith)
 import Dict as D exposing (insert, empty, Dict, get)
 import Maybe exposing (withDefault)
 
@@ -122,6 +122,17 @@ count node =
       (Leaf _ _) -> 1
       (Node _ _ _) -> 0
   in sum proc (+) 0 node
+
+
+sort : (Node d -> Node d -> Order) -> Node d -> Node d
+sort compare node =
+  let proc n =
+    case n of
+      (Leaf _ _) -> n
+      (Node i info cs) ->
+          let cs1 = sortWith compare <| map proc cs
+          in Node i info cs1
+  in proc node
 
 foldBreadthFirst : (acc -> Node d -> acc) -> acc -> Node d -> acc
 foldBreadthFirst f acc node =

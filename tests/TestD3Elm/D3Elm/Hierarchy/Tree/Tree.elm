@@ -54,9 +54,17 @@ all =
           , test "testGetDescendants" <| testGetDescendants
           , test "sum" <| testSum
           , test "count" <| testCount
+          , test "sort" <| testSort
 
 
         ]
+
+
+testSort () = let
+    n1 = sort (\n1 n2 -> compare (getIndex n2) (getIndex n1)) node
+    r = reverse <| foldPreOrder (\acc n -> getData n::acc) [] n1
+  in Expect.equal r ["F", "G", "I", "H", "B", "A", "D", "E", "C" ]
+
 
 testFindNodes () = let
     r = map getData <| findNodes (\n -> getIndex n == 4) node
