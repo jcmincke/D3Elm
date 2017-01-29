@@ -98,7 +98,7 @@ getAncestors parents node =
         in case D.get i parents of
             Just p -> proc (p::acc) p
             Nothing -> acc
-  in proc [] node
+  in proc [node] node
 
 getDescendants : Node d -> List (Node d)
 getDescendants node =
@@ -114,6 +114,22 @@ sum f add zero node =
             let s = foldl (\n s -> add s (withDefault zero <| D.get (getIndex n) acc)) (f n) cs
             in D.insert i s acc
   in foldPostOrder proc empty node
+
+getPath : Node d -> Node d -> Node d ->  (List (Node d), List (Node d))
+getPath root na nb =
+  let parents = getParents root
+      anca = getAncestors parents na
+      ancb = getAncestors parents nb
+      findCommonParent p la lb =
+        case (la, lb) of
+          ([], _) -> p
+          (_, []) -> p
+          (a::ra, b::rb) ->
+            if getIndex a == getIndex b
+            then findCommonParent (la, lb) ra rb
+            else p
+  in findCommonParent (anca, ancb) anca ancb
+
 
 count : Node d -> Dict Int Int
 count node =
@@ -133,6 +149,14 @@ sort compare node =
           let cs1 = sortWith compare <| map proc cs
           in Node i info cs1
   in proc node
+
+getLinks : Node d -> List (Node d, Node d)
+getLinks node =
+  let proc acc n =
+    case n of
+      Leaf _ _ -> acc
+      Node _ _ cs -> foldl (\c acc -> (n, c)::acc) acc cs
+  in foldBreadthFirst proc [] node
 
 foldBreadthFirst : (acc -> Node d -> acc) -> acc -> Node d -> acc
 foldBreadthFirst f acc node =

@@ -39,6 +39,26 @@ node = let
     in f
 
 
+testPath () =
+  let
+    parents = getParents node
+    n1s = findNodes (\n -> getIndex n == 7) node
+    n2s = findNodes (\n -> getIndex n == 3) node
+  in case (n1s, n2s) of
+        ([n1], [n2]) ->
+          let (p11, p21) = getPath node n1 n2
+              (p22, p12) = getPath node n2 n1
+              d11 = map getData p11
+              d21 = map getData p21
+              d12 = map getData p12
+              d22 = map getData p22
+              anc1 = map getData <| getAncestors parents n1
+              anc2 = map getData <| getAncestors parents n2
+              b1 = (d11, d21) == (["F","G","I"],["F","B","D"])
+              b2 = (d11, d21) == (d12, d22)
+          in Expect.true "" (b1 && b2)
+        _ -> Expect.fail "bug"
+
 
 all : Test
 all =
@@ -55,9 +75,13 @@ all =
           , test "sum" <| testSum
           , test "count" <| testCount
           , test "sort" <| testSort
+          , test "links" <| testLinks
+          , test "path" <| testPath
+
 
 
         ]
+
 
 
 testSort () = let
@@ -65,6 +89,19 @@ testSort () = let
     r = reverse <| foldPreOrder (\acc n -> getData n::acc) [] n1
   in Expect.equal r ["F", "G", "I", "H", "B", "A", "D", "E", "C" ]
 
+
+testLinks () = let
+    r = reverse <| map (\(a,b) -> (getData a, getData b)) <| getLinks node
+  in Expect.equal r [
+      ("F", "B")
+      , ("F", "G")
+      , ("B", "A")
+      , ("B", "D")
+      , ("G", "I")
+      , ("D", "C")
+      , ("D", "E")
+      , ("I", "H")
+      ]
 
 testFindNodes () = let
     r = map getData <| findNodes (\n -> getIndex n == 4) node
@@ -94,10 +131,10 @@ testGetLeaves () = let
 
 testGetAncestors () =
     case findNodes (\n -> getIndex n == 6) node of
-      [n] ->
+      [nh] ->
         let parents = getParents node
-            r = reverse <| map getData <| getAncestors parents n
-        in Expect.equal r ["I", "G", "F"]
+            r = reverse <| map getData <| getAncestors parents nh
+        in Expect.equal r ["H", "I", "G", "F"]
       _ -> Expect.equal  1 2
 
 testGetDescendants () =
