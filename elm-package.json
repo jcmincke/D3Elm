@@ -5,7 +5,8 @@
     "license": "Mozilla Public License Version 2.0",
     "source-directories": [
         "nesting"
-        ,"src"
+        , "src"
+        , "examples"
     ],
     "exposed-modules": [],
     "dependencies": {
@@ -14,7 +15,9 @@
         "elm-lang/html": "2.0.0 <= v < 3.0.0",
         "elm-lang/http": "1.0.0 <= v < 2.0.0",
         "elm-lang/svg": "2.0.0 <= v < 3.0.0",
-        "elm-lang/lazy": "2.0.0 <= v < 3.0.0"
+        "elm-lang/lazy": "2.0.0 <= v < 3.0.0",
+        "iosphere/elm-logger": "1.0.0 <= v < 2.0.0"
+
 
 
     },

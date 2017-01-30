@@ -18,7 +18,7 @@ type alias ClusterConfig d = {
 
 defaultClusterConfig : ClusterConfig d
 defaultClusterConfig = {
-    clusterSeparation = \na nb -> 1
+    clusterSeparation = \na nb -> 1.0
     , clusterDx = 1.0
     , clusterDy = 1.0
     , clusterNodeSize = False
@@ -41,7 +41,7 @@ maxY valueDict minValue l =
         case D.get (getIndex n) valueDict of
           Just (_, v) -> if acc < v then v else acc
           Nothing -> acc
-  in foldl proc minValue l
+  in 1 + foldl proc minValue l
 
 leafLeft : Node d -> Node d
 leafLeft node =
@@ -59,10 +59,10 @@ leafRight node =
         (c::_) -> leafRight c
         [] -> node
 
+getCoord xydic node = withDefault (0.0, 0.0) <| D.get (getIndex node) xydic
 
 cluster config root =
-  let getCoord xydic node = withDefault (0.0, 0.0) <| D.get (getIndex node) xydic
-      proc (xydic, previousNode, currentX) node =
+  let proc (xydic, previousNode, currentX) node =
         let i = getIndex node
         in  case getChildren node of
             [] ->
@@ -94,7 +94,7 @@ cluster config root =
             else  let x = (xNode - x0) / (x1 - x0) * config.clusterDx
                       y = (1.0 - yNode / yRoot) * config.clusterDy
                   in D.insert i (x, y) xydic
-  in foldPostOrder proc2 empty root
+  in foldPostOrder proc2 xydic root
 
 
 {-
