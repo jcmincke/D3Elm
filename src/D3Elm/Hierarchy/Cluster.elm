@@ -97,38 +97,3 @@ cluster config root =
   in foldPostOrder proc2 xydic root
 
 
-{-
- function cluster(root) {
-    var previousNode,
-        x = 0;
-
-    // First walk, computing the initial x & y values.
-    root.eachAfter(function(node) {
-      var children = node.children;
-      if (children) {
-        node.x = meanX(children);
-        node.y = maxY(children);
-      } else {
-        node.x = previousNode ? x += separation(node, previousNode) : 0;
-        node.y = 0;
-        previousNode = node;
-      }
-    });
-
-    var left = leafLeft(root),
-        right = leafRight(root),
-        x0 = left.x - separation(left, right) / 2,
-        x1 = right.x + separation(right, left) / 2;
-
-    // Second walk, normalizing x & y to the desired size.
-    return root.eachAfter(nodeSize ? function(node) {
-      node.x = (node.x - root.x) * dx;
-      node.y = (root.y - node.y) * dy;
-    } : function(node) {
-      node.x = (node.x - x0) / (x1 - x0) * dx;
-      node.y = (1 - (root.y ? node.y / root.y : 1)) * dy;
-    });
-}
--}
-
-

@@ -64,6 +64,8 @@ buildTree a fvalue fchildren =
         in n
   in proc 0 0 a
 
+--buildTreeFromEdges : Dict comparable d ->    -> Node d
+
 getParents : Node d -> Dict Int (Node d)
 getParents n =
   let proc acc n =
