@@ -1,6 +1,5 @@
 module Cluster exposing (main)
 
---import Html as H exposing (Html, button, div, text)
 import Html
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
@@ -8,7 +7,6 @@ import Dict as D exposing (..)
 import List as L exposing (..)
 
 import Logger as Logger exposing (..)
---import Svg as S exposing (..)
 
 import D3Elm.Hierarchy.Tree.Tree exposing (..)
 import D3Elm.Hierarchy.Cluster exposing (..)
@@ -36,7 +34,7 @@ node = let
         f = Node 9 (mkNodeInfo "F" 3) [b,g]
     in f
 
-main = roundRect
+main = clusterHtml
 --H.text "hello"
 
 clusterConfig ={defaultClusterConfig | clusterDx = 500, clusterDy = 500} --, clusterNodeSize = True}
@@ -65,8 +63,8 @@ edges =
                         --circle [ cx (toString (x*200)), cy (toString (y*200)), r "5" ] []
   in L.map proc links
 
-roundRect : Html.Html msg
-roundRect =
+clusterHtml : Html.Html msg
+clusterHtml =
   let _ = log "" xyDic
   in  svg
         [ width "1000", height "600", viewBox "0 0 1000 600" ]
