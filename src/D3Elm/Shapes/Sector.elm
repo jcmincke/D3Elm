@@ -44,10 +44,15 @@ sector spec =
     in path.thePath
   else
     let deltaAngle = spec.endAngle - spec.startAngle
-        ((x1, y1) as p1) = (spec.innerRadius * cos spec.startAngle, spec.innerRadius * sin spec.startAngle)
-        ((x2, y2) as p2) = (spec.outerRadius * cos spec.startAngle, spec.outerRadius * sin spec.startAngle)
-        ((x3, y3) as p3) = (spec.outerRadius * cos spec.endAngle, spec.outerRadius * sin spec.endAngle)
-        ((x4, y4) as p4) = (spec.innerRadius * cos spec.endAngle, spec.innerRadius * sin spec.endAngle)
+        (paddedStartAngle, paddedEndAngle) =
+            if deltaAngle >= 2 * spec.padAngle
+            then (spec.startAngle + spec.padAngle, spec.endAngle - spec.padAngle)
+            else (spec.startAngle, spec.endAngle)
+
+        ((x1, y1) as p1) = (spec.innerRadius * cos paddedStartAngle, spec.innerRadius * sin paddedStartAngle)
+        ((x2, y2) as p2) = (spec.outerRadius * cos paddedStartAngle, spec.outerRadius * sin paddedStartAngle)
+        ((x3, y3) as p3) = (spec.outerRadius * cos paddedEndAngle, spec.outerRadius * sin paddedEndAngle)
+        ((x4, y4) as p4) = (spec.innerRadius * cos paddedEndAngle, spec.innerRadius * sin paddedEndAngle)
         lFlag = if deltaAngle >= pi then True else False
         path1 = moveTo p1 path0
         path2 = lineTo p2 path1

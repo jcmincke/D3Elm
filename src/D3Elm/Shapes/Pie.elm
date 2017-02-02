@@ -51,7 +51,9 @@ pie spec data =
           cumAnglesProc acc last angles =
             case angles of
               [] -> reverse acc
-              (h::t) -> cumAnglesProc ((last, last + h)::acc) (last + h) t
+              (h::t) -> let paddedLast = last + spec.padAngle/2
+                            newPaddedLast = paddedLast + h + spec.padAngle/2
+                        in cumAnglesProc ((paddedLast , newPaddedLast)::acc) newPaddedLast t
           cumAngles = cumAnglesProc [] spec.startAngle sectorAngles
           resProc (d, (sa, ea)) = {data = d, startAngle = sa, endAngle = ea, padAngle = spec.padAngle / 2}
       in L.map resProc <| zip data cumAngles
