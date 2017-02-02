@@ -32,14 +32,14 @@ moveTo : (Float, Float) -> Path -> Path
 moveTo (x, y) path =
   { path | previousX = path.currentX, previousY = path.currentY
           , currentX = x, currentY = y
-          , thePath = path.thePath ++ " M " ++ toString x ++ toString y
+          , thePath = path.thePath ++ " M " ++ toString x ++ " , " ++ toString y
   }
 
 relMoveTo : (Float, Float) -> Path -> Path
 relMoveTo (dx, dy) path =
   { path | previousX = path.currentX, previousY = path.currentY
           , currentX = path.currentX + dx, currentY =  path.currentY + dy
-          , thePath = path.thePath ++ " m " ++ toString dx ++ toString dy
+          , thePath = path.thePath ++ " m "++ " , " ++ toString dx ++ toString dy
   }
 
 closePath : Path -> Path
@@ -51,7 +51,7 @@ lineTo : (Float, Float) -> Path -> Path
 lineTo (x, y) path =
   { path | previousX = path.currentX, previousY = path.currentX
            , currentX = x, currentY = y
-           , thePath = path.thePath ++ " L " ++ toString x ++ toString y
+           , thePath = path.thePath ++ " L " ++ toString x++ " , " ++ toString y
   }
 
 relLineTo : (Float, Float) -> Path -> Path
@@ -60,7 +60,7 @@ relLineTo (dx, dy) path =
       ny = path.currentY + dy
   in  { path | previousX = path.currentX, previousY = path.currentX
                , currentX = nx, currentY = nx
-               , thePath = path.thePath ++ " l " ++ toString dx ++ toString dy
+               , thePath = path.thePath ++ " l " ++ toString dx++ " , " ++ toString dy
       }
 
 
@@ -98,16 +98,16 @@ quadraticCurveTo : ((Float, Float), (Float, Float)) -> Path -> Path
 quadraticCurveTo ((x1, y1), (x2, y2)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = x2, currentY = y2
-           , thePath = path.thePath ++ " Q " ++ toString x1 ++ "," ++ toString y1
-                                             ++ toString x2 ++ "," ++ toString y2
+           , thePath = path.thePath ++ " Q " ++ toString x1 ++ " , " ++ toString y1
+                                             ++ toString x2 ++ " , " ++ toString y2
   }
 
 relQuadraticCurveTo : ((Float, Float), (Float, Float)) -> Path -> Path
 relQuadraticCurveTo ((dx1, dy1), (dx2, dy2)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = path.currentX + dx2, currentY = path.currentY + dy2
-           , thePath = path.thePath ++ " q " ++ toString dx1 ++ "," ++ toString dy1
-                                             ++ toString dx2 ++ "," ++ toString dy2
+           , thePath = path.thePath ++ " q " ++ toString dx1 ++ " , " ++ toString dy1
+                                             ++ toString dx2 ++ " , " ++ toString dy2
   }
 
 quadraticReflexiveCurveTo : (Float, Float) -> Path -> Path
@@ -122,7 +122,7 @@ relQuadraticReflexiveCurveTo : (Float, Float) -> Path -> Path
 relQuadraticReflexiveCurveTo (dx1, dy1) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = path.currentX + dx1, currentY = path.currentY + dy1
-           , thePath = path.thePath ++ " t " ++ toString dx1 ++ "," ++ toString dy1
+           , thePath = path.thePath ++ " t " ++ toString dx1 ++ " , " ++ toString dy1
   }
 
 
@@ -130,9 +130,9 @@ cubicCurveTo : ((Float, Float), (Float, Float), (Float, Float)) -> Path -> Path
 cubicCurveTo ((x1, y1), (x2, y2), (x3, y3)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = x3, currentY = y3
-           , thePath = path.thePath ++ " C " ++ toString x1 ++ "," ++ toString y1
-                                             ++ toString x2 ++ "," ++ toString y2
-                                             ++ toString x3 ++ "," ++ toString y3
+           , thePath = path.thePath ++ " C " ++ toString x1 ++ " , " ++ toString y1
+                                             ++ toString x2 ++ " , " ++ toString y2
+                                             ++ toString x3 ++ " , " ++ toString y3
   }
 
 
@@ -141,9 +141,9 @@ relCubicCurveTo : ((Float, Float), (Float, Float), (Float, Float)) -> Path -> Pa
 relCubicCurveTo ((dx1, dy1), (dx2, dy2), (dx3, dy3)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = path.currentX + dx3, currentY = path.currentY + dy3
-           , thePath = path.thePath ++ " c " ++ toString dx1 ++ "," ++ toString dy1
-                                             ++ toString dx2 ++ "," ++ toString dy2
-                                             ++ toString dx3 ++ "," ++ toString dy3
+           , thePath = path.thePath ++ " c " ++ toString dx1 ++ " , " ++ toString dy1
+                                             ++ toString dx2 ++ " , " ++ toString dy2
+                                             ++ toString dx3 ++ " , " ++ toString dy3
   }
 
 
@@ -154,8 +154,8 @@ cubicReflexiveCurveTo : ((Float, Float), (Float, Float)) -> Path -> Path
 cubicReflexiveCurveTo ((x1, y1), (x2, y2)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = x2, currentY = y2
-           , thePath = path.thePath ++ " S " ++ toString x1 ++ "," ++ toString y1
-                                             ++ toString x2 ++ "," ++ toString y2
+           , thePath = path.thePath ++ " S " ++ toString x1 ++ " , " ++ toString y1
+                                             ++ toString x2 ++ " , " ++ toString y2
   }
 
 
@@ -164,20 +164,20 @@ relCubicReflexiveCurveTo : ((Float, Float), (Float, Float)) -> Path -> Path
 relCubicReflexiveCurveTo ((dx1, dy1), (dx2, dy2)) path =
   { path | previousX = path.currentX, previousY = path.currentY
            , currentX = path.currentX + dx2, currentY = path.currentY + dy2
-           , thePath = path.thePath ++ " s " ++ toString dx1 ++ "," ++ toString dy1
-                                             ++ toString dx2 ++ "," ++ toString dy2
+           , thePath = path.thePath ++ " s " ++ toString dx1 ++ " , " ++ toString dy1
+                                             ++ toString dx2 ++ " , " ++ toString dy2
   }
 
 
 
 arcCurveTo radiusX radiusY rot largeFlag sweepFlag (x, y) path =
-  let lFlagBool = if largeFlag then "1" else 0
-  let sFlagBool = if sweepFlag then "1" else 0
+  let lFlagBool = if largeFlag then "1" else "0"
+      sFlagBool = if sweepFlag then "1" else "0"
   in  { path |  previousX = path.currentX, previousY = path.currentY
                 , currentX = x, currentY = y
                 , thePath = path.thePath ++ " A " ++
-                  toString radiusX ++ "," ++ toString radiusY ++
-                  toString rot ++ "," ++ lFlagBool ++ sFlagBool ++
+                  toString radiusX ++ " , " ++ toString radiusY ++ " , " ++
+                  toString rot ++ " , " ++ lFlagBool ++ " , " ++ sFlagBool ++ " , "  ++
                   toString x ++ " , " ++ toString y
       }
 
@@ -185,13 +185,13 @@ arcCurveTo radiusX radiusY rot largeFlag sweepFlag (x, y) path =
 
 
 relArcCurveTo radiusX radiusY rot largeFlag sweepFlag (dx, dy) path =
-  let lFlagBool = if largeFlag then "1" else 0
-  let sFlagBool = if sweepFlag then "1" else 0
+  let lFlagBool = if largeFlag then "1" else "0"
+      sFlagBool = if sweepFlag then "1" else "0"
   in  { path |  previousX = path.currentX, previousY = path.currentY
                 , currentX = path.currentX + dx, currentY = path.currentY + dy
                 , thePath = path.thePath ++ " a " ++
-                  toString radiusX ++ "," ++ toString radiusY ++
-                  toString rot ++ "," ++ lFlagBool ++ sFlagBool ++
+                  toString radiusX ++ " , " ++ toString radiusY ++ " , "  ++
+                  toString rot ++ " , " ++ lFlagBool ++ " , " ++ sFlagBool ++ " , " ++
                   toString dx ++ " , " ++ toString dy
       }
 
