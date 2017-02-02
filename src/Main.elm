@@ -8,4 +8,6 @@ import D3Elm.Path.Path
 import D3Elm.Shapes.Sector
 import D3Elm.Shapes.Pie
 
+import D3Elm.Shapes.Curves.Basis
+
 main = text "hello"

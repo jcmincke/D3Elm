@@ -25,7 +25,7 @@ pieSpec = {
     , padAngle = 0.03
   }
 
---sectorsPaths : PieSpec d -> []
+sectorsPaths : PieSpec Int -> List (Html.Html msg)
 sectorsPaths pieSpec =
   let pieResults = pie pieSpec data
       refSectorSpec = {sectorSpec0 | innerRadius = 80,  outerRadius = 100}

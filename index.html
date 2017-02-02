@@ -6595,18 +6595,19 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$arcCurveTo = F7(
 																		_elm_lang$core$Basics$toString(_p7)))))))))))))))
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relCubicReflexiveCurveTo = F2(
-	function (_p8, path) {
-		var _p9 = _p8;
-		var _p11 = _p9._1._1;
-		var _p10 = _p9._1._0;
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relCubicReflexiveCurveTo = F3(
+	function (_p9, _p8, path) {
+		var _p10 = _p9;
+		var _p11 = _p8;
+		var _p13 = _p11._1;
+		var _p12 = _p11._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: path.currentX + _p10,
-				currentY: path.currentY + _p11,
+				currentX: path.currentX + _p12,
+				currentY: path.currentY + _p13,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -6615,34 +6616,35 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relCubicReflexiveCurveTo
 						' s ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p9._0._0),
+							_elm_lang$core$Basics$toString(_p10._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p9._0._1),
+									_elm_lang$core$Basics$toString(_p10._1),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p10),
+										_elm_lang$core$Basics$toString(_p12),
 										A2(
 											_elm_lang$core$Basics_ops['++'],
 											' , ',
-											_elm_lang$core$Basics$toString(_p11))))))))
+											_elm_lang$core$Basics$toString(_p13))))))))
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicReflexiveCurveTo = F2(
-	function (_p12, path) {
-		var _p13 = _p12;
-		var _p15 = _p13._1._1;
-		var _p14 = _p13._1._0;
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicReflexiveCurveTo = F3(
+	function (_p15, _p14, path) {
+		var _p16 = _p15;
+		var _p17 = _p14;
+		var _p19 = _p17._1;
+		var _p18 = _p17._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: _p14,
-				currentY: _p15,
+				currentX: _p18,
+				currentY: _p19,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -6651,115 +6653,27 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicReflexiveCurveTo = 
 						' S ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p13._0._0),
+							_elm_lang$core$Basics$toString(_p16._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p13._0._1),
+									_elm_lang$core$Basics$toString(_p16._1),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p14),
+										_elm_lang$core$Basics$toString(_p18),
 										A2(
 											_elm_lang$core$Basics_ops['++'],
 											' , ',
-											_elm_lang$core$Basics$toString(_p15))))))))
+											_elm_lang$core$Basics$toString(_p19))))))))
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relCubicCurveTo = F2(
-	function (_p16, path) {
-		var _p17 = _p16;
-		var _p19 = _p17._2._1;
-		var _p18 = _p17._2._0;
-		return _elm_lang$core$Native_Utils.update(
-			path,
-			{
-				previousX: path.currentX,
-				previousY: path.currentY,
-				currentX: path.currentX + _p18,
-				currentY: path.currentY + _p19,
-				thePath: A2(
-					_elm_lang$core$Basics_ops['++'],
-					path.thePath,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' c ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p17._0._0),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								' , ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p17._0._1),
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p17._1._0),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											' , ',
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												_elm_lang$core$Basics$toString(_p17._1._1),
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													_elm_lang$core$Basics$toString(_p18),
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														' , ',
-														_elm_lang$core$Basics$toString(_p19)))))))))))
-			});
-	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicCurveTo = F2(
-	function (_p20, path) {
-		var _p21 = _p20;
-		var _p23 = _p21._2._1;
-		var _p22 = _p21._2._0;
-		return _elm_lang$core$Native_Utils.update(
-			path,
-			{
-				previousX: path.currentX,
-				previousY: path.currentY,
-				currentX: _p22,
-				currentY: _p23,
-				thePath: A2(
-					_elm_lang$core$Basics_ops['++'],
-					path.thePath,
-					A2(
-						_elm_lang$core$Basics_ops['++'],
-						' C ',
-						A2(
-							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p21._0._0),
-							A2(
-								_elm_lang$core$Basics_ops['++'],
-								' , ',
-								A2(
-									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p21._0._1),
-									A2(
-										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p21._1._0),
-										A2(
-											_elm_lang$core$Basics_ops['++'],
-											' , ',
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												_elm_lang$core$Basics$toString(_p21._1._1),
-												A2(
-													_elm_lang$core$Basics_ops['++'],
-													_elm_lang$core$Basics$toString(_p22),
-													A2(
-														_elm_lang$core$Basics_ops['++'],
-														' , ',
-														_elm_lang$core$Basics$toString(_p23)))))))))))
-			});
-	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relQuadraticReflexiveCurveTo = F2(
-	function (_p24, path) {
-		var _p25 = _p24;
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relCubicCurveTo = F4(
+	function (_p22, _p21, _p20, path) {
+		var _p23 = _p22;
+		var _p24 = _p21;
+		var _p25 = _p20;
 		var _p27 = _p25._1;
 		var _p26 = _p25._0;
 		return _elm_lang$core$Native_Utils.update(
@@ -6774,28 +6688,120 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relQuadraticReflexiveCur
 					path.thePath,
 					A2(
 						_elm_lang$core$Basics_ops['++'],
-						' t ',
+						' c ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p26),
+							_elm_lang$core$Basics$toString(_p23._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
-								_elm_lang$core$Basics$toString(_p27)))))
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p23._1),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(_p24._0),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											' , ',
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(_p24._1),
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(_p26),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														' , ',
+														_elm_lang$core$Basics$toString(_p27)))))))))))
 			});
 	});
-var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$quadraticReflexiveCurveTo = F2(
-	function (_p28, path) {
-		var _p29 = _p28;
-		var _p31 = _p29._1;
-		var _p30 = _p29._0;
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicCurveTo = F4(
+	function (_p30, _p29, _p28, path) {
+		var _p31 = _p30;
+		var _p32 = _p29;
+		var _p33 = _p28;
+		var _p35 = _p33._1;
+		var _p34 = _p33._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: _p30,
-				currentY: _p31,
+				currentX: _p34,
+				currentY: _p35,
+				thePath: A2(
+					_elm_lang$core$Basics_ops['++'],
+					path.thePath,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' C ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p31._0),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' , ',
+								A2(
+									_elm_lang$core$Basics_ops['++'],
+									_elm_lang$core$Basics$toString(_p31._1),
+									A2(
+										_elm_lang$core$Basics_ops['++'],
+										_elm_lang$core$Basics$toString(_p32._0),
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											' , ',
+											A2(
+												_elm_lang$core$Basics_ops['++'],
+												_elm_lang$core$Basics$toString(_p32._1),
+												A2(
+													_elm_lang$core$Basics_ops['++'],
+													_elm_lang$core$Basics$toString(_p34),
+													A2(
+														_elm_lang$core$Basics_ops['++'],
+														' , ',
+														_elm_lang$core$Basics$toString(_p35)))))))))))
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relQuadraticReflexiveCurveTo = F2(
+	function (_p36, path) {
+		var _p37 = _p36;
+		var _p39 = _p37._1;
+		var _p38 = _p37._0;
+		return _elm_lang$core$Native_Utils.update(
+			path,
+			{
+				previousX: path.currentX,
+				previousY: path.currentY,
+				currentX: path.currentX + _p38,
+				currentY: path.currentY + _p39,
+				thePath: A2(
+					_elm_lang$core$Basics_ops['++'],
+					path.thePath,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						' t ',
+						A2(
+							_elm_lang$core$Basics_ops['++'],
+							_elm_lang$core$Basics$toString(_p38),
+							A2(
+								_elm_lang$core$Basics_ops['++'],
+								' , ',
+								_elm_lang$core$Basics$toString(_p39)))))
+			});
+	});
+var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$quadraticReflexiveCurveTo = F2(
+	function (_p40, path) {
+		var _p41 = _p40;
+		var _p43 = _p41._1;
+		var _p42 = _p41._0;
+		return _elm_lang$core$Native_Utils.update(
+			path,
+			{
+				previousX: path.currentX,
+				previousY: path.currentY,
+				currentX: _p42,
+				currentY: _p43,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -6804,25 +6810,25 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$quadraticReflexiveCurveT
 						' T ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p30),
+							_elm_lang$core$Basics$toString(_p42),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								',',
-								_elm_lang$core$Basics$toString(_p31)))))
+								_elm_lang$core$Basics$toString(_p43)))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relQuadraticCurveTo = F2(
-	function (_p32, path) {
-		var _p33 = _p32;
-		var _p35 = _p33._1._1;
-		var _p34 = _p33._1._0;
+	function (_p44, path) {
+		var _p45 = _p44;
+		var _p47 = _p45._1._1;
+		var _p46 = _p45._1._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: path.currentX + _p34,
-				currentY: path.currentY + _p35,
+				currentX: path.currentX + _p46,
+				currentY: path.currentY + _p47,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -6831,34 +6837,34 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relQuadraticCurveTo = F2
 						' q ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p33._0._0),
+							_elm_lang$core$Basics$toString(_p45._0._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p33._0._1),
+									_elm_lang$core$Basics$toString(_p45._0._1),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p34),
+										_elm_lang$core$Basics$toString(_p46),
 										A2(
 											_elm_lang$core$Basics_ops['++'],
 											' , ',
-											_elm_lang$core$Basics$toString(_p35))))))))
+											_elm_lang$core$Basics$toString(_p47))))))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$quadraticCurveTo = F2(
-	function (_p36, path) {
-		var _p37 = _p36;
-		var _p39 = _p37._1._1;
-		var _p38 = _p37._1._0;
+	function (_p48, path) {
+		var _p49 = _p48;
+		var _p51 = _p49._1._1;
+		var _p50 = _p49._1._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: _p38,
-				currentY: _p39,
+				currentX: _p50,
+				currentY: _p51,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -6867,20 +6873,20 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$quadraticCurveTo = F2(
 						' Q ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p37._0._0),
+							_elm_lang$core$Basics$toString(_p49._0._0),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
 								A2(
 									_elm_lang$core$Basics_ops['++'],
-									_elm_lang$core$Basics$toString(_p37._0._1),
+									_elm_lang$core$Basics$toString(_p49._0._1),
 									A2(
 										_elm_lang$core$Basics_ops['++'],
-										_elm_lang$core$Basics$toString(_p38),
+										_elm_lang$core$Basics$toString(_p50),
 										A2(
 											_elm_lang$core$Basics_ops['++'],
 											' , ',
-											_elm_lang$core$Basics$toString(_p39))))))))
+											_elm_lang$core$Basics$toString(_p51))))))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relVLineTo = F2(
@@ -6952,12 +6958,12 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$hLineTo = F2(
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relLineTo = F2(
-	function (_p40, path) {
-		var _p41 = _p40;
-		var _p43 = _p41._1;
-		var _p42 = _p41._0;
-		var ny = path.currentY + _p43;
-		var nx = path.currentX + _p42;
+	function (_p52, path) {
+		var _p53 = _p52;
+		var _p55 = _p53._1;
+		var _p54 = _p53._0;
+		var ny = path.currentY + _p55;
+		var nx = path.currentX + _p54;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
@@ -6973,25 +6979,25 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relLineTo = F2(
 						' l ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p42),
+							_elm_lang$core$Basics$toString(_p54),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
-								_elm_lang$core$Basics$toString(_p43)))))
+								_elm_lang$core$Basics$toString(_p55)))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo = F2(
-	function (_p44, path) {
-		var _p45 = _p44;
-		var _p47 = _p45._1;
-		var _p46 = _p45._0;
+	function (_p56, path) {
+		var _p57 = _p56;
+		var _p59 = _p57._1;
+		var _p58 = _p57._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentX,
-				currentX: _p46,
-				currentY: _p47,
+				currentX: _p58,
+				currentY: _p59,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -7000,11 +7006,11 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo = F2(
 						' L ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p46),
+							_elm_lang$core$Basics$toString(_p58),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
-								_elm_lang$core$Basics$toString(_p47)))))
+								_elm_lang$core$Basics$toString(_p59)))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$closePath = function (path) {
@@ -7015,17 +7021,17 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$closePath = function (pa
 		});
 };
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relMoveTo = F2(
-	function (_p48, path) {
-		var _p49 = _p48;
-		var _p51 = _p49._1;
-		var _p50 = _p49._0;
+	function (_p60, path) {
+		var _p61 = _p60;
+		var _p63 = _p61._1;
+		var _p62 = _p61._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: path.currentX + _p50,
-				currentY: path.currentY + _p51,
+				currentX: path.currentX + _p62,
+				currentY: path.currentY + _p63,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -7037,22 +7043,22 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$relMoveTo = F2(
 							' , ',
 							A2(
 								_elm_lang$core$Basics_ops['++'],
-								_elm_lang$core$Basics$toString(_p50),
-								_elm_lang$core$Basics$toString(_p51)))))
+								_elm_lang$core$Basics$toString(_p62),
+								_elm_lang$core$Basics$toString(_p63)))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$moveTo = F2(
-	function (_p52, path) {
-		var _p53 = _p52;
-		var _p55 = _p53._1;
-		var _p54 = _p53._0;
+	function (_p64, path) {
+		var _p65 = _p64;
+		var _p67 = _p65._1;
+		var _p66 = _p65._0;
 		return _elm_lang$core$Native_Utils.update(
 			path,
 			{
 				previousX: path.currentX,
 				previousY: path.currentY,
-				currentX: _p54,
-				currentY: _p55,
+				currentX: _p66,
+				currentY: _p67,
 				thePath: A2(
 					_elm_lang$core$Basics_ops['++'],
 					path.thePath,
@@ -7061,11 +7067,11 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$moveTo = F2(
 						' M ',
 						A2(
 							_elm_lang$core$Basics_ops['++'],
-							_elm_lang$core$Basics$toString(_p54),
+							_elm_lang$core$Basics$toString(_p66),
 							A2(
 								_elm_lang$core$Basics_ops['++'],
 								' , ',
-								_elm_lang$core$Basics$toString(_p55)))))
+								_elm_lang$core$Basics$toString(_p67)))))
 			});
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$resetFrom = function (path) {
@@ -7080,6 +7086,91 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$tauEpsilon = _elm_lang$e
 var _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$Path = F5(
 	function (a, b, c, d, e) {
 		return {previousX: a, previousY: b, currentX: c, currentY: d, thePath: e};
+	});
+var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Curves_Basis$addPoint = F4(
+	function (_p2, _p1, _p0, path) {
+		var _p3 = _p2;
+		var _p9 = _p3._1;
+		var _p8 = _p3._0;
+		var _p4 = _p1;
+		var _p7 = _p4._1;
+		var _p6 = _p4._0;
+		var _p5 = _p0;
+		var yb3 = ((_p9 + (4 * _p7)) + _p5._1) / 6;
+		var xb3 = ((_p8 + (4 * _p6)) + _p5._0) / 6;
+		var yb2 = (_p9 + (2 * _p7)) / 3;
+		var xb2 = (_p8 + (2 * _p6)) / 3;
+		var yb1 = ((2 * _p9) + _p7) / 3;
+		var xb1 = ((2 * _p8) + _p6) / 3;
+		return A4(
+			_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$cubicCurveTo,
+			{ctor: '_Tuple2', _0: xb1, _1: yb1},
+			{ctor: '_Tuple2', _0: xb2, _1: yb2},
+			{ctor: '_Tuple2', _0: xb3, _1: yb3},
+			path);
+	});
+var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Curves_Basis$basis = F2(
+	function (points, path) {
+		var _p10 = points;
+		if ((((_p10.ctor === '::') && (_p10._1.ctor === '::')) && (_p10._1._1.ctor === '::')) && (_p10._1._1._1.ctor === '::')) {
+			var _p18 = _p10._1._0;
+			var _p17 = _p10._0;
+			var go = F2(
+				function (points, path) {
+					go:
+					while (true) {
+						var _p11 = points;
+						if ((_p11.ctor === '::') && (_p11._1.ctor === '::')) {
+							if (_p11._1._1.ctor === '[]') {
+								var _p12 = _p11._1._0;
+								return A4(_elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Curves_Basis$addPoint, _p11._0, _p12, _p12, path);
+							} else {
+								var _p14 = _p11._1._0;
+								var _p13 = _p11._1._1._0;
+								var path1 = A4(_elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Curves_Basis$addPoint, _p11._0, _p14, _p13, path);
+								var _v5 = {
+									ctor: '::',
+									_0: _p14,
+									_1: {ctor: '::', _0: _p13, _1: _p11._1._1._1}
+								},
+									_v6 = path1;
+								points = _v5;
+								path = _v6;
+								continue go;
+							}
+						} else {
+							return path;
+						}
+					}
+				});
+			var _p15 = _p18;
+			var x1 = _p15._0;
+			var y1 = _p15._1;
+			var _p16 = _p17;
+			var x0 = _p16._0;
+			var y0 = _p16._1;
+			var xn = ((5 * x0) + x1) / 6;
+			var yn = ((5 * y0) + y1) / 6;
+			var path1 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$moveTo, _p17, path);
+			var path2 = A2(
+				_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo,
+				{ctor: '_Tuple2', _0: xn, _1: yn},
+				path1);
+			return A2(
+				go,
+				{
+					ctor: '::',
+					_0: _p18,
+					_1: {
+						ctor: '::',
+						_0: _p10._1._1._0,
+						_1: {ctor: '::', _0: _p10._1._1._1._0, _1: _p10._1._1._1._1}
+					}
+				},
+				path);
+		} else {
+			return path;
+		}
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Pie$zip = F2(
 	function (la, lb) {
@@ -7116,13 +7207,14 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Pie$pie = F2(
 						if (_p4.ctor === '[]') {
 							return _elm_lang$core$List$reverse(acc);
 						} else {
-							var _p5 = _p4._0;
+							var paddedLast = last + (spec.padAngle / 2);
+							var newPaddedLast = (paddedLast + _p4._0) + (spec.padAngle / 2);
 							var _v4 = {
 								ctor: '::',
-								_0: {ctor: '_Tuple2', _0: last, _1: last + _p5},
+								_0: {ctor: '_Tuple2', _0: paddedLast, _1: newPaddedLast},
 								_1: acc
 							},
-								_v5 = last + _p5,
+								_v5 = newPaddedLast,
 								_v6 = _p4._1;
 							acc = _v4;
 							last = _v5;
@@ -7158,7 +7250,7 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Pie$pie = F2(
 		}
 	});
 var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Pie$pieSpec0 = {
-	getValue: function (_p6) {
+	getValue: function (_p5) {
 		return 1;
 	},
 	startAngle: 0,
@@ -7221,41 +7313,44 @@ var _elm_lang$elm_architecture_tutorial$D3Elm_Shapes_Sector$sector = function (s
 		var path = path7;
 		return path.thePath;
 	} else {
-		var _p4 = {
-			ctor: '_Tuple2',
-			_0: spec.innerRadius * _elm_lang$core$Basics$cos(spec.endAngle),
-			_1: spec.innerRadius * _elm_lang$core$Basics$sin(spec.endAngle)
-		};
-		var p4 = _p4;
-		var x4 = _p4._0;
-		var y4 = _p4._1;
+		var deltaAngle = spec.endAngle - spec.startAngle;
+		var _p4 = (_elm_lang$core$Native_Utils.cmp(deltaAngle, 2 * spec.padAngle) > -1) ? {ctor: '_Tuple2', _0: spec.startAngle + spec.padAngle, _1: spec.endAngle - spec.padAngle} : {ctor: '_Tuple2', _0: spec.startAngle, _1: spec.endAngle};
+		var paddedStartAngle = _p4._0;
+		var paddedEndAngle = _p4._1;
 		var _p5 = {
 			ctor: '_Tuple2',
-			_0: spec.outerRadius * _elm_lang$core$Basics$cos(spec.endAngle),
-			_1: spec.outerRadius * _elm_lang$core$Basics$sin(spec.endAngle)
+			_0: spec.innerRadius * _elm_lang$core$Basics$cos(paddedStartAngle),
+			_1: spec.innerRadius * _elm_lang$core$Basics$sin(paddedStartAngle)
 		};
-		var p3 = _p5;
-		var x3 = _p5._0;
-		var y3 = _p5._1;
+		var p1 = _p5;
+		var x1 = _p5._0;
+		var y1 = _p5._1;
+		var path1 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$moveTo, p1, _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$path0);
 		var _p6 = {
 			ctor: '_Tuple2',
-			_0: spec.outerRadius * _elm_lang$core$Basics$cos(spec.startAngle),
-			_1: spec.outerRadius * _elm_lang$core$Basics$sin(spec.startAngle)
+			_0: spec.outerRadius * _elm_lang$core$Basics$cos(paddedStartAngle),
+			_1: spec.outerRadius * _elm_lang$core$Basics$sin(paddedStartAngle)
 		};
 		var p2 = _p6;
 		var x2 = _p6._0;
 		var y2 = _p6._1;
+		var path2 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo, p2, path1);
 		var _p7 = {
 			ctor: '_Tuple2',
-			_0: spec.innerRadius * _elm_lang$core$Basics$cos(spec.startAngle),
-			_1: spec.innerRadius * _elm_lang$core$Basics$sin(spec.startAngle)
+			_0: spec.outerRadius * _elm_lang$core$Basics$cos(paddedEndAngle),
+			_1: spec.outerRadius * _elm_lang$core$Basics$sin(paddedEndAngle)
 		};
-		var p1 = _p7;
-		var x1 = _p7._0;
-		var y1 = _p7._1;
-		var path1 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$moveTo, p1, _elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$path0);
-		var path2 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo, p2, path1);
-		var deltaAngle = spec.endAngle - spec.startAngle;
+		var p3 = _p7;
+		var x3 = _p7._0;
+		var y3 = _p7._1;
+		var _p8 = {
+			ctor: '_Tuple2',
+			_0: spec.innerRadius * _elm_lang$core$Basics$cos(paddedEndAngle),
+			_1: spec.innerRadius * _elm_lang$core$Basics$sin(paddedEndAngle)
+		};
+		var p4 = _p8;
+		var x4 = _p8._0;
+		var y4 = _p8._1;
 		var lFlag = (_elm_lang$core$Native_Utils.cmp(deltaAngle, _elm_lang$core$Basics$pi) > -1) ? true : false;
 		var path3 = A7(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$arcCurveTo, spec.outerRadius, spec.outerRadius, 0, lFlag, true, p3, path2);
 		var path4 = A2(_elm_lang$elm_architecture_tutorial$D3Elm_Path_Path$lineTo, p4, path3);
