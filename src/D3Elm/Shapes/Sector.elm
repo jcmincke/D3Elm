@@ -25,6 +25,7 @@ sectorSpec0 = {
   }
 
 
+sector : SectorSpec -> String
 sector spec =
   if spec.endAngle - spec.startAngle >= 2 * pi
   then
@@ -57,4 +58,3 @@ sector spec =
         path = path6
     in path.thePath
 
--- arcCurveTo radiusX radiusY rot largeFlag sweepFlag (x, y) path =

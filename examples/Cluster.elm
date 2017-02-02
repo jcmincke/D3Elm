@@ -35,10 +35,8 @@ node = let
     in f
 
 main = clusterHtml
---H.text "hello"
 
 clusterConfig ={defaultClusterConfig | clusterDx = 500, clusterDy = 500} --, clusterNodeSize = True}
---clusterConfig ={defaultClusterConfig | clusterNodeSize = True}
 
 xyDic = cluster clusterConfig node
 

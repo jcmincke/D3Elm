@@ -36,14 +36,8 @@ sectorHtml =
                        []
               ]
             , text_ [SA.x "10", SA.y "20"] [text t]
-             -- g [transform "translate(50, 50)"]
-             --   [text t]
           ]
 
---  <g transform="translate(10, 50)">
---  <path d="M 0  0 L 100  0" stroke="green"
---  stroke-width="2" fill = "none"/>
---  </g>
 
 
 
