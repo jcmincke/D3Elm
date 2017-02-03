@@ -8,7 +8,10 @@ import D3Elm.Path.Path exposing (..)
 
 basis points path =
   case points of
-    (p0::p1::p2::p::r) ->
+    (p0::p1::[]) ->
+      let path1 = moveTo p0 path
+      in lineTo p1 path1
+    (p0::p1::p2::r) ->
       let path1 = moveTo p0 path
           (x0, y0) = p0
           (x1, y1) = p1
@@ -26,7 +29,7 @@ basis points path =
                 let path1 = addPoint p0 p1 p path
                 in go (p1::p::r) path1
               _ -> path
-      in go (p1::p2::p::r) path3
+      in go (p1::p2::r) path3
     _ -> path
 
 

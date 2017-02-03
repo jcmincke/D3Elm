@@ -9,5 +9,6 @@ import D3Elm.Shapes.Sector
 import D3Elm.Shapes.Pie
 
 import D3Elm.Shapes.Curves.Basis
+import D3Elm.Shapes.Curves.Linear
 
 main = text "hello"
