@@ -15,7 +15,6 @@ basis points path =
       let path1 = moveTo p0 path
           (x0, y0) = p0
           (x1, y1) = p1
-
           xn = (5 * x0 + x1) / 6
           yn = (5 * y0 + y1) / 6
           path2 = lineTo (xn, yn) path1
