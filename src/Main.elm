@@ -11,6 +11,6 @@ import D3Elm.Shapes.Pie
 import D3Elm.Shapes.Curves.Basis
 import D3Elm.Shapes.Curves.Linear
 import D3Elm.Shapes.Curves.Step
-
+import D3Elm.Shapes.Curves.Natural
 
 main = text "hello"
