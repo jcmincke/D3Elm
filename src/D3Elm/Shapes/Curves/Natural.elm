@@ -4,9 +4,56 @@ import Basics exposing (..)
 import List as L exposing(..)
 
 import D3Elm.Path.Path exposing (..)
-import D3Elm.Shapes.Curves.Linear exposing (..)
 
+import List as L exposing (..)
+import Tuple  exposing (..)
 
+import D3Elm.Common exposing (..)
+import D3Elm.Path.Path exposing (..)
+
+natural ks path =
+  case ks of
+    [] -> path
+    [(x0, y0)] -> moveTo (x0, y0) path
+    [(x0, y0), (x1, y1)] -> lineTo (x1, y1) <| moveTo (x0, y0) path
+    _ ->
+      let xks = L.map first ks
+          yks = L.map second ks
+          xs = controlPoints xks
+          ys = controlPoints yks
+
+          go path xs ys =
+            case (xs, ys) of
+              ([], []) -> path
+              ((x0,x1,x2,x3)::xsr, (y0,y1,y2,y3)::ysr) ->
+                  let path1 = cubicCurveTo (x1, y1) (x2, y2) (x3, y3) path
+                  in go path1 xsr ysr
+              _ -> path
+
+      in case (xs, ys) of
+          ((x0,_,_,_)::_, (y0,_,_,_)::_) ->
+            let path1 = moveTo (x0, y0) path
+            in go path1 xs ys
+          _ -> path
+
+controlPoints ks =
+  let a = initialAs ks
+      b = initialBs ks
+      c = initialCs ks
+      d = initialDs ks
+
+      c1 = sweepCs a b c
+      d1 = sweepDs a b c1 d
+      p1 = backSubstitution c1 d1
+
+      p2 = computeP2 ks p1
+      go ks p1 p2 =
+        case (ks, p1, p2) of
+          (ki::ki1::[], [p1i], [p2i]) -> [(ki, p1i, p2i, ki1)]
+          (ki::ki1::kr, p1i::p1r, p2i::p2r) ->
+            (ki, p1i, p2i, ki1) :: go (ki1::kr) p1r p2r
+          _ -> []
+  in go ks p1 p2
 
 initialAs ks =
   let go ks =
@@ -124,46 +171,4 @@ checkD a b c x =
           _ -> []
       d1 = go a b c x1
   in d1
-
-{-
-
-
-function controlPoints(x) {
-  var i,
-      n = x.length - 1,
-      m,
-      a = new Array(n),
-      b = new Array(n),
-      r = new Array(n);
-
-  a[0] = 0, b[0] = 2, r[0] = x[0] + 2 * x[1];
-
-  for (i = 1; i < n - 1; ++i)
-    a[i] = 1,
-    b[i] = 4,
-    r[i] = 4 * x[i] + 2 * x[i + 1];
-
-  a[n - 1] = 2,
-  b[n - 1] = 7,
-  r[n - 1] = 8 * x[n - 1] + x[n];
-
-  for (i = 1; i < n; ++i)
-    m = a[i] / b[i - 1],
-    b[i] -= m,
-    r[i] -= m * r[i - 1];
-
-  a[n - 1] = r[n - 1] / b[n - 1];
-
-
-  for (i = n - 2; i >= 0; --i)
-    a[i] = (r[i] - a[i + 1]) / b[i];
-
-  b[n - 1] = (x[n] + a[n - 1]) / 2;
-
-  for (i = 0; i < n - 1; ++i)
-    b[i] = 2 * x[i + 1] - a[i + 1];
-
-  return [a, b];
-}
--}
 
