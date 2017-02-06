@@ -11,6 +11,7 @@ import Dict as D exposing (isEmpty, Dict, get)
 import D3Elm.Common exposing (..)
 
 import D3Elm.Shapes.Curves.Natural  exposing (..)
+import D3Elm.Shapes.Curves.Monotone  exposing (..)
 
 
 
@@ -20,7 +21,7 @@ all =
         [  test "triDiagonal" <| testTriDiagonal
           , test "checkD" <| testCheckD
           , test "natural" <| testNatural
-
+          , test "monotone/slope3" <| testMonotoneSlope3
         ]
 
 testCheckD () =
@@ -99,3 +100,12 @@ testNatural () =
       deltas = zipWith (\a b -> abs (a-b) ) ks ks1
   in Expect.true "control points  are equals" (L.length ks == L.length ks1 && L.all (\d -> d <= 1e-6) deltas)
 
+
+
+testMonotoneSlope3 () =
+  let p0 = (0, 0)
+      p1 = (1, 2)
+      p2 = (2, 5)
+
+      r1 = slope3 p0 p1 p2
+  in Expect.equal r1 2.5
