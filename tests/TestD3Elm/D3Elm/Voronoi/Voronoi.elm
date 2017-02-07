@@ -10,7 +10,7 @@ import Dict as D exposing (isEmpty, Dict, get)
 
 import D3Elm.Common exposing (..)
 
-import D3Elm.Voronoi.Voronoi  exposing (..)
+import D3Elm.Voronoi.Voronoi  as V exposing (..)
 
 
 eps = 1e-10
@@ -20,7 +20,21 @@ all =
     describe "Voronoi "
         [ test "2nd degree equation" <| test2ndDegreeEquation
           , test "parabola intersection" <| testParabolaIntersection
+  --        , test "insert arc" <| testInsertArc
         ]
+{-}
+testInsertArc () =
+  let ta = Leaf "a"
+      pred1 _ _ = V.Ok
+      visit acc _ = acc
+      tab = insertArc "b" visit () pred1 ta
+      pred2 _ s = if s == "b" then V.Ok else OnLeft
+      tabc = insertArc "c" visit () pred2 tab
+      sites = allSites tabc
+      r = Expect.equal sites ["a","b","c","b","a"]
+  in r
+-}
+
 
 testParabolaIntersection () =
   let ((xp1, yp1) as p1)= (3, 3)
