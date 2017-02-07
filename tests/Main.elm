@@ -10,6 +10,7 @@ import TestD3Elm.D3Elm.Hierarchy.Tree.Tree as Tree
 import TestD3Elm.D3Elm.Hierarchy.Cluster as Cluster
 import TestD3Elm.D3Elm.Hierarchy.Treemap.Treemap as Treemap
 import TestD3Elm.D3Elm.Shapes.Curves.Curves as Curves
+import TestD3Elm.D3Elm.Voronoi.Voronoi as Voronoi
 
 allTests : Test
 allTests =
@@ -18,6 +19,7 @@ allTests =
     , Cluster.all
     , Treemap.all
     , Curves.all
+    , Voronoi.all
     ]
 
 main : TestProgram
