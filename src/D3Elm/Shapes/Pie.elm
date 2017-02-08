@@ -31,14 +31,6 @@ type alias PieResults d = {
     , padAngle : Float
   }
 
-{-}
-zip: List a -> List b -> List (a,b)
-zip la lb =
-  case (la, lb) of
-    ([], _) -> []
-    (_, []) -> []
-    (ha::ta, hb::tb) -> (ha, hb) :: zip ta tb
--}
 
 pie : PieSpec d -> List d -> List (PieResults d)
 pie spec data =

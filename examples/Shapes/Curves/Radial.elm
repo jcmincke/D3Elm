@@ -9,6 +9,7 @@ import List as L exposing (..)
 
 import Basics exposing (..)
 
+import D3Elm.Common exposing (..)
 import D3Elm.Path.Path exposing (..)
 import D3Elm.Shapes.Curves.Radial exposing (..)
 
@@ -27,12 +28,7 @@ datab = [
   , (360, 8)
   ]
 
---data = L.map (\(a,r) -> (r*10, a*pi/180)) datab
 
-mkList s e =
-  let go i =
-    if i == e then [e] else i::go (i+1)
-  in go s
 
 data =
   let angles = mkList 0 360

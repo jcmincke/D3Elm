@@ -11,7 +11,7 @@ type alias Point = {
     , y : Float
   }
 
-type Site = Site Int Point
+type Site = Site Int (Float, Float)
 
 
 type Tree site =
@@ -22,7 +22,7 @@ type Tree site =
 type ArcPred =
   ArcFound
   |OnLeft
-  |Onright
+  |OnRight
 
 -- returned the sites in the left/right order
 
@@ -80,7 +80,7 @@ leftMostBreak ns b intersectPredClosed intersectPredOpen tree =
           Leaf c -> -- break is the left most
             case intersectPredOpen OpenOnRight b c of
               ArcFound -> -- ok, we can split this arc.
-                  (Break (Leaf b) (Break (Leaf ns) (Leaf b) ns b) b ns, True)
+                  (Break (Leaf c) (Break (Leaf ns) (Leaf c) ns c) c ns, True)
               _ -> (tree, False)
           Break (Leaf _) t2 a c ->
               -- we have 2 consecutive breaks and 3 sites (b, a, c) so we have a piece of a parabola
@@ -89,7 +89,7 @@ leftMostBreak ns b intersectPredClosed intersectPredOpen tree =
               case intersectPredClosed b a c of
                 ArcFound -> -- ok, we can split this arc.
                   (Break
-                      (Break (Leaf a) (Break (Leaf ns) (Leaf a) a ns) ns a)
+                      (Break (Leaf a) (Break (Leaf ns) (Leaf a) ns a) a ns)
                       t2
                       a c
                     , True)
@@ -119,11 +119,11 @@ insertArc ns intersectPredClosed intersectPredOpen tree =
                 let (tb1, bool) = leftMostBreak ns a intersectPredClosed intersectPredOpen tb
                 in  if bool
                     then (Break ta tb1 a b, True)
-                    else -- intersection not found in the neighborood, continue from break on the and on the right
+                    else -- intersection not found in the neighborood, continue from breaks on the left and on the right
                       case go ta of
-                        (ta11, True) -> (Break ta1 tb a b, True)
+                        (ta11, True) -> (Break ta11 tb a b, True)
                         _ -> case go tb of
-                              (tb11, True) -> (Break ta tb1 a b, True)
+                              (tb11, True) -> (Break ta tb11 a b, True)
                               _ -> (tree, False)
   in case tree of
     Leaf a -> Break (Leaf a) (Break (Leaf ns) (Leaf a) ns a) a ns
@@ -132,32 +132,50 @@ insertArc ns intersectPredClosed intersectPredOpen tree =
       in t
 
 
-{-
+isMiddleArc yd s a b c =
+  let (Site _ ((xa, ya) as pa)) = a
+      (Site _ pb) = b
+      (Site _ ((xc, yc) as pc)) = c
+      (Site _ (x, y)) = s
+      yai = parabola yd pa x
+      ybi = parabola yd pb x
+      yci = parabola yd pc x
+  in if x < xa
+     then OnLeft
+     else if x > xc
+          then OnRight
+          else  if ybi <= yai && ybi <= yci
+                then ArcFound
+                else  if yai < ybi && yai < yci
+                      then OnLeft
+                      else OnRight
 
-insertArc : site -> (acc -> Tree site -> acc) -> acc -> (acc -> site -> ArcPred) -> Tree site -> Tree site
-insertArc c visit acc arcSelector tree =
-  let go n tree =
-    let acc1 = visit acc tree
-    in case tree of
-        Leaf b ->
-          if arcSelector acc1 b == Ok  -- ok replace this arc
-          then (Break (Leaf b) (Break (Leaf c) (Leaf b) c b) b c, acc1, True)
-          else (Leaf b, acc1, False)
-        Break ta tb a b ->
-          let (nta, acc2, found) = go acc1 ta
-          in  if found
-              then (Break nta tb a b, acc2, True)
-              else  let (ntb, acc3, found) = go acc2 tb
-                    in  if found
-                        then (Break ta ntb a b, acc3, True)
-                        else (tree, acc3, False)
-  in case tree of
-    Leaf a -> Break (Leaf a) (Break (Leaf c) (Leaf a) c a) a c
-    Break _ _ _ _ ->
-      let (t, _, _) = go acc tree
-      in t
+isBoundaryArc yd s side a b =
+  case side of
+    OpenOnRight ->
+      let (Site _ pa) = a
+          (Site _ ((xb, _) as pb)) = b
+          (Site _ (x, y)) = s
+          yai = parabola yd pa x
+          ybi = parabola yd pb x
+      in  if xb < x && ybi <= yai
+          then ArcFound
+          else OnLeft
+    OpenOnLeft ->
+      let (Site _ pa) = a
+          (Site _ ((xb, _) as pb)) = b
+          (Site _ (x, y)) = s
+          yai = parabola yd pa x
+          ybi = parabola yd pb x
+      in  if x < xb && yai <= ybi
+          then ArcFound
+          else OnRight
 
--}
+
+-- type OpenOn = OpenOnRight | OpenOnLeft
+
+
+
 -- parabola equation
 parabola yd (xf, yf) x =
   let p = yf - yd
@@ -189,4 +207,41 @@ solve2 a b c =
               x2 = ((-1) * b + d) / (2 * a)
           in Just (x1, x2)
 
+
+
+
+
+circumCircle (x1, y1) (x2, y2) (x3, y3) =
+  let nx = (x3*x3 - x2*x2 + y3*y3 - y2*y2) / (2 * (y3 - y2)) - (x2*x2 - x1*x1 + y2*y2 - y1*y1) / (2 * (y2 - y1))
+      dx = (x2 - x1) / (y2 - y1) - (x3 - x2) / (y3 -y2)
+      xc = nx / dx
+      yc = -(x2 - x1) * xc / (y2 - y1) + (x2*x2 - x1*x1 + y2*y2 - y1*y1) / (2 * (y2 - y1))
+  in (xc, yc)
+
+{-
+
+insertArc : site -> (acc -> Tree site -> acc) -> acc -> (acc -> site -> ArcPred) -> Tree site -> Tree site
+insertArc c visit acc arcSelector tree =
+  let go n tree =
+    let acc1 = visit acc tree
+    in case tree of
+        Leaf b ->
+          if arcSelector acc1 b == Ok  -- ok replace this arc
+          then (Break (Leaf b) (Break (Leaf c) (Leaf b) c b) b c, acc1, True)
+          else (Leaf b, acc1, False)
+        Break ta tb a b ->
+          let (nta, acc2, found) = go acc1 ta
+          in  if found
+              then (Break nta tb a b, acc2, True)
+              else  let (ntb, acc3, found) = go acc2 tb
+                    in  if found
+                        then (Break ta ntb a b, acc3, True)
+                        else (tree, acc3, False)
+  in case tree of
+    Leaf a -> Break (Leaf a) (Break (Leaf c) (Leaf a) c a) a c
+    Break _ _ _ _ ->
+      let (t, _, _) = go acc tree
+      in t
+
+-}
 

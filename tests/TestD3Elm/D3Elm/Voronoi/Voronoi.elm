@@ -7,10 +7,12 @@ import Fuzz exposing (list, int, tuple, string)
 import String
 import List as L exposing (reverse, all, map, concat)
 import Dict as D exposing (isEmpty, Dict, get)
+import Tuple exposing (..)
 
 import D3Elm.Common exposing (..)
 
 import D3Elm.Voronoi.Voronoi  as V exposing (..)
+import TestD3Elm.D3Elm.Voronoi.VoronoiRef  as V exposing (..)
 
 
 eps = 1e-10
@@ -20,8 +22,45 @@ all =
     describe "Voronoi "
         [ test "2nd degree equation" <| test2ndDegreeEquation
           , test "parabola intersection" <| testParabolaIntersection
-  --        , test "insert arc" <| testInsertArc
+          , test "insert arc" <| testInsertArc
         ]
+
+testInsertArc () =
+  let s0 = Site 0 (10, 10)
+      xs = [(30, 9), (15, 8)] --, (57, 7)] --, (2, 6), (12, 5), (22, 4), (5, 3), (19, 2), (10, 1)]
+      indexes = mkList 1 100
+      sites = L.map (\(i, p) -> Site i p) (zip indexes xs)
+      yps = L.map second xs
+
+      -- tree implementation
+      tree0 = Leaf s0
+      foldProc1 s acc =
+        let (Site _ (_, yp)) = s
+        in insertArc s (isMiddleArc yp s) (isBoundaryArc yp s) acc
+      tree = L.foldl foldProc1 tree0 sites
+      sites1 = allSites tree
+
+      -- reference implementation
+      sites0 = [s0]
+      foldProc2 s acc =
+        let (Site _ (_, yp)) = s
+        in insertArcRef s (isMiddleArc yp s) (isBoundaryArc yp s) acc
+      sites2 = L.foldl foldProc2 sites0 sites
+
+      r = isMiddleArc 9 (Site 3 (29,9))    (Site 2 (15,10)) (Site 0 (10,10)) (Site 1 (30,10))
+  in Expect.equal (Just r) Nothing --sites2
+--  in Expect.equal sites1 [] --sites2
+--  in Expect.equal sites1 sites2
+
+
+
+
+
+-- insertArcRef ns intersectPredClosed intersectPredOpen sites =
+
+-- insertArc : site -> (site -> site -> site -> ArcPred) -> (OpenOn -> site -> site -> ArcPred)
+
+
 {-}
 testInsertArc () =
   let ta = Leaf "a"

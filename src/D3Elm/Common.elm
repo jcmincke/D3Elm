@@ -14,7 +14,11 @@ zipWith f la lb =
     (_, []) -> []
     (ha::ta, hb::tb) -> (f ha hb) :: zipWith f ta tb
 
-
+mkList : Int -> Int -> List Int
+mkList s e =
+  let go i =
+    if i == e then [e] else i::go (i+1)
+  in go s
 
 
 
