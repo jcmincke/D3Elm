@@ -1,12 +1,15 @@
-module TestD3Elm.D3Elm.Voronoi.VoronoiRef exposing (..)
+module D3Elm.Voronoi.VoronoiSimple exposing (..)
 
 import List as L exposing (append, foldl, reverse, maximum, map, head, sortWith, reverse)
 import Dict as D exposing (insert, empty, Dict, get)
 import Maybe exposing (withDefault)
 import Tuple exposing (..)
 
-import D3Elm.Voronoi.Voronoi as V exposing (Event (..), Site (..), insertEvent, isBoundaryArc, ArcPred (..),
-          isMiddleArc, circumCircle, OpenOn (..))
+--import D3Elm.Voronoi.Voronoi as V exposing (Event (..), Site (..), insertEvent, isBoundaryArc, ArcPred (..),
+--          isMiddleArc, circumCircle, OpenOn (..))
+
+import D3Elm.Common exposing (..)
+import D3Elm.Voronoi.Common exposing (..)
 
 {-}
 type alias Point = {
@@ -45,7 +48,7 @@ insertArcRef ns intersectPredClosed intersectPredOpen sites =
           _ -> go (a::visited) (b::c::r)
       _ -> L.reverse visited ++ sites
   in case sites of
-    [] -> []
+    [] -> [ns]
     [a] -> [a,ns,a]
     (a::b::r) ->
       case intersectPredOpen OpenOnLeft a b of
@@ -72,9 +75,11 @@ findCircleEvents sites =
         let (Site _ pa) = a
             (Site _ pb) = b
             (Site _ pc) = c
-            (xc, yc, radius) = circumCircle pa pb pc
-            evt = CircleEvent a b c (xc, yc) radius
-        in go (evt::acc) (b::c::r)
+        in  if a /= c
+            then  let (xc, yc, radius) = circumCircle pa pb pc
+                      evt = CircleEvent a b c (xc, yc) radius
+                  in go (evt::acc) (b::c::r)
+            else go acc (b::c::r)
       _ -> acc
   in go [] sites
 
@@ -82,7 +87,7 @@ findCircleEvents sites =
 showEvent evt =
   case evt of
     (PointEvent (Site i _)) -> "Point " ++ toString i
-    (CircleEvent (Site ia _) (Site ib _) (Site ic _) _ _) -> "Point " ++ toString (ia, ib, ic)
+    (CircleEvent (Site ia _) (Site ib _) (Site ic _) _ _) -> "Circle " ++ toString (ia, ib, ic)
 
 eventComparer e1 e2 =
   let getY e =
@@ -96,26 +101,25 @@ processOneEvent sites event =
     (PointEvent s) ->
       let (Site _ (_, yp)) = s
           sites1 = insertArcRef s (isMiddleArc yp s) (isBoundaryArc yp s) sites
-      in (showEvent event, sites1)
-    (CircleEvent a b c _ _ ) ->
+      in ("insert "++showEvent event, sites1, Nothing)
+    (CircleEvent a b c xc _ ) ->
       let sites1 = removeArc a b c sites
-      in (showEvent event, sites1)
+      in ("Remove "++showEvent event, sites1, Just xc)
 
 
-
+loop : List Site -> List (Event Site) -> List (String,  List Site, List (Event Site))
 loop sites0 events =
-  let go acc sites events =
+  let go (acc, vertices) sites events =
     case events of
-      [] -> ("End", sites, events)
+      [] -> ("End", sites, events)::acc
       (event::r) ->
-        let (msg, sites1) = processOneEvent sites event
+        let (msg, sites1, vertexM) = processOneEvent sites event
             circleEvents = findCircleEvents sites1
             events1 = L.foldl (\e acc -> insertEvent eventComparer e acc) r circleEvents
-        in go ((msg, sites1, events1)::acc) sites1 events1
-  in go [] sites0 events
+        in go ((msg, sites1, events1)::acc, vertexM::vertices) sites1 events1
+  in go ([], []) sites0 events
 
 
--- insertEvent comparer evt evts0 =
 
 
 
