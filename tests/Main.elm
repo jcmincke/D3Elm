@@ -11,6 +11,7 @@ import TestD3Elm.D3Elm.Hierarchy.Cluster as Cluster
 import TestD3Elm.D3Elm.Hierarchy.Treemap.Treemap as Treemap
 import TestD3Elm.D3Elm.Shapes.Curves.Curves as Curves
 import TestD3Elm.D3Elm.Voronoi.VoronoiSimple as VoronoiSimple
+import TestD3Elm.D3Elm.Voronoi.Common as VoronoiCommon
 
 allTests : Test
 allTests =
@@ -20,6 +21,7 @@ allTests =
     , Treemap.all
     , Curves.all
     , VoronoiSimple.all
+    , VoronoiCommon.all
     ]
 
 main : TestProgram
