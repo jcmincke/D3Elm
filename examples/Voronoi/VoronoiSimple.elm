@@ -1,5 +1,6 @@
 module Shapes.Voronoi.VoronoiSimple exposing (main)
 
+import Debug exposing (..)
 --import Html as H exposing (Html, button, div, text)
 import Html exposing (Html, button, div, text)
 import Svg as S exposing (..)
@@ -15,6 +16,9 @@ import D3Elm.Voronoi.VoronoiSimple exposing (..)
 
 
 main = mainHtml
+
+--[Log] bad circle: CircleEvent (Site 0 (15,10)) (Site 4 (14,4.8)) (Site 5 (16,3))
+--(17.611475409836064,6.801639344262295) 4.129081580733101 (VoronoiSimple.elm, line 3960)
 
 
 data2 =
@@ -34,15 +38,18 @@ data =
 --  let xs0 = [(10, 10), (12, 9), (13, 6), (13.5, 5.5), (15, 5), (9, 4), (12, 1)] --, (16, 4), (5, 3), (13, 2), (10, 1)]
   --let xs0 = [(10, 10), (12, 9), (13, 6), (15, 5), (9, 4), (12, 1)] --, (16, 4), (5, 3), (13, 2), (10, 1)]
   let xs0 = [
-    (0, 0)
-    , (0, 1)
-    , (0.2, 0.5)
+    (0.5, 1)
     , (0.3, 0.6)
-    , (0.4, 0.48)
-    , (0.6, 0.3)
-    , (0.7, 0.6)
-    , (1, 0)
-    , (1, 1)
+    , (0.6, 0.5)
+--    , (1.2, 0.25)
+--    , (0.9, 0.2)
+--    , (0.8, 0.1)
+--    , (0.45, 0)
+--    , (0.4, 0.48)
+--    , (0.6, 0.3)
+--    , (0.7, 0.6)
+--    , (0.95, 0.05)
+--    , (0.8, 0.95)
      ]
   in L.map (\(x,y) -> (10+x*10, y*10)) xs0
 --  in xs0
@@ -66,7 +73,7 @@ log =
   in L.reverse sts
 
 
-transform (x,y) = (x*20, 600-y*20)
+transform (x,y) = (x*20, 500-y*20)
 
 points  data =
   let proc (x,y) = S.circle [SA.cx (toString x), SA.cy (toString y), SA.r "2", SA.fill "blue"] []

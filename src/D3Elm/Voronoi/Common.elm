@@ -83,6 +83,8 @@ isBoundaryArc _ s side a b =
           then ArcFound (x, ybi)
           else OnLeft
     OpenOnLeft ->
+      deede
+      --  verifier: bug quand point est fortement à droite de b , il coupe a -> faux positif
       let (Site _ pa) = a
           (Site _ ((xb, _) as pb)) = b
           (Site _ (x, y)) = s
