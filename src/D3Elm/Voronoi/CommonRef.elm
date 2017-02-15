@@ -1,6 +1,6 @@
-module D3Elm.Voronoi.Common exposing (..)
+module D3Elm.Voronoi.CommonRef exposing (..)
 
-import Debug exposing (..)
+
 import List as L exposing (append, foldl, reverse, maximum, map, head, sortWith, reverse)
 import Dict as D exposing (insert, empty, Dict, get)
 import Maybe exposing (withDefault)
@@ -47,8 +47,7 @@ insertEvent comparer evt evts0 =
   in go [] evts0
 
 
-isMiddleArc : Site -> Site -> Site -> Site -> ArcPred
-isMiddleArc s a b c =
+isMiddleArc _ s a b c =
   let (Site _ ((xa, ya) as pa)) = a
       (Site _ ((xb, yb) as pb)) = b
       (Site _ ((xc, yc) as pc)) = c
@@ -72,10 +71,9 @@ isMiddleArc s a b c =
                     else  if x < xab
                           then OnLeft
                           else OnRight
-                  _ -> log "isMiddleArc: should never reach here" OnLeft  -- should never happen
+                  _ -> OnLeft  -- should never happen
 
-isBoundaryArc : Site -> OpenOn -> Site -> Site -> ArcPred
-isBoundaryArc s side a b =
+isBoundaryArc _ s side a b =
   case side of
     OpenOnRight ->
       let (Site _ ((xa, _) as pa)) = a
@@ -128,10 +126,6 @@ parabolaIntersection yd (xp1, yp1) (xp2, yp2) =
             Nothing -> Nothing
   in rm
 
-parabolaIntersectionLeftOnly yd (xp1, yp1) (xp2, yp2) =
-  case parabolaIntersection yd (xp1, yp1) (xp2, yp2) of
-    Just (x, _) -> Just x
-    Nothing -> Nothing
 
 
 
@@ -151,7 +145,7 @@ solve2 a b c =
 
 
 -- x1 x3 x2 x3
-circumCircle : (Float, Float) -> (Float, Float) -> (Float, Float) -> (Float, Float, Float)
+
 circumCircle (x1, y1) (x2, y2) (x3, y3) =
   if (x1 == x3)
   then circumCircle (x1, y1) (x3, y3) (x2, y2)
@@ -172,6 +166,18 @@ circumCircle (x1, y1) (x2, y2) (x3, y3) =
               yc = b1 - xc / a1
               r = sqrt ((x1 - xc) *  (x1 - xc) + (y1 - yc) * (y1 - yc))
           in (xc, yc, r)
+
+
+
+
+circumCircle2 (x1, y1) (x2, y2) (x3, y3) =
+  let nx = (x3*x3 - x2*x2 + y3*y3 - y2*y2) / (2 * (y3 - y2)) - (x2*x2 - x1*x1 + y2*y2 - y1*y1) / (2 * (y2 - y1))
+      dx = ((x2 - x1) / (y2 - y1)) - ((x3 - x2) / (y3 - y2))
+      xc = nx / dx
+      yc = ((-1) * (x2 - x1) * xc / (y2 - y1)) + ((x2*x2 - x1*x1 + y2*y2 - y1*y1) / (2 * (y2 - y1)))
+      r = sqrt ((x1 - xc) *  (x1 - xc) + (y1 - yc) * (y1 - yc))
+  in (xc, yc, r)
+
 
 
 
