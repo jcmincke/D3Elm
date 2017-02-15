@@ -57,7 +57,8 @@ insertArcRef ns intersectPredClosed intersectPredOpen edges events sites0 =
             ArcFound vertex ->
               let edges1 = insertUndefinedEdge b ns edges
                   events1 = addCircleEvent yd a b ns events
-              in log "insert point right" (L.reverse visited ++ (a::b::ns::b::[]), edges1, events1)
+                  l = log "insert point right" ns
+              in (L.reverse visited ++ (a::b::ns::b::[]), edges1, events1)
             _ ->  (sites0, edges, events)
         (a::b::c::r) ->
           case intersectPredClosed a b c of
@@ -65,7 +66,8 @@ insertArcRef ns intersectPredClosed intersectPredOpen edges events sites0 =
               let edges1 = insertUndefinedEdge b ns edges
                   events1 = addCircleEvent yd a b ns events
                   events2 = addCircleEvent yd ns b c events1
-              in log "insert point middle" (L.reverse visited ++ (a::b::ns::b::c::r), edges1, events2)
+                  l = log "insert point middle" ns
+              in (L.reverse visited ++ (a::b::ns::b::c::r), edges1, events2)
             _ -> go (a::visited) (b::c::r)
         _ -> (sites0, edges, events)
   in case sites0 of
@@ -77,18 +79,19 @@ insertArcRef ns intersectPredClosed intersectPredOpen edges events sites0 =
         ArcFound vertex ->
           let edges1 = insertUndefinedEdge a ns edges
               events1 = addCircleEvent yd ns a b events
-          in log "insert point left" (a::ns::a::b::r, edges1, events1)
+              l = log "insert point left" ns
+          in  (a::ns::a::b::r, edges1, events1)
         _ -> go [] sites0
 
-removeArc : site -> site -> site -> List site -> (List site, Bool)
+removeArc : Site -> Site -> Site -> List Site -> (List Site, Bool)
 removeArc a b c sites0 =
   let go acc sites =
     case sites of
       (a1::b1::c1::r) ->
         if (a==a1 && b==b1 && c==c1)
         then  let sites1 = L.reverse acc ++ (a1 :: c1 :: r)
-
-              in log "removed arc" (sites1, True)
+                  l = log "removed arc" (siteSummary sites1)
+              in  (sites1, True)
         else go (a1::acc) (b1::c1::r)
       _ -> (sites0, False)
   in go [] sites0
@@ -98,7 +101,7 @@ siteSummary sites = L.map (\(Site i _) -> i) sites
 removeArc2 : Float -> List Site -> (List Site, Maybe (Site, Site, Site))
 removeArc2 yd sites0 =
   let eps = 1e-4
-      l = log "intersection: sites"  <| siteSummary sites0
+      l = log "try to remove arc: "  <| siteSummary sites0
       go acc sites =
     case sites of
       (a::b::c::r) ->
@@ -107,7 +110,7 @@ removeArc2 yd sites0 =
             (Site ic pc) = c
             im1 = parabolaIntersection yd pa pb
             im2 = parabolaIntersection yd pb pc
-            l = log "intersection"  (yd, im1, im2, ia, ib, ic)
+            --l = log "intersection"  (yd, im1, im2, ia, ib, ic)
         in case (im1, im2) of
           (Just (xab, _), Just (xbc, _)) ->
               let yab = parabola yd pb xab
@@ -115,7 +118,8 @@ removeArc2 yd sites0 =
                   ok =  abs (xab - xbc) < eps && abs (yab - ybc) < eps
               in  if ok
                   then  let sites1 = L.reverse acc ++ (a :: c :: r)
-                        in log "removed arc" (sites1, Just (a, b, c))
+                            l = log "removed arc" (yd, siteSummary [a, b, c])
+                        in (sites1, Just (a, b, c))
                   else go (a::acc) (b::c::r)
           _ -> go (a::acc) (b::c::r)
       _ -> let l = log "skip remove arc" (yd)
@@ -147,8 +151,8 @@ checkCircleEvent a b c (xcenter, ycenter) radius =
       (Just (xab, _), Just (xbc, _)) ->
           let yab = parabola yd pb xab
               ybc = parabola yd pb xbc
-              l = log "circle check 1" <| (a,b,c)
-              l1 = log "circle check 2 " <| (xab, yab, xbc, ybc, xcenter, ycenter, radius)
+              --l = log "circle check 1" <| (a,b,c)
+              --l1 = log "circle check 2 " <| (xab, yab, xbc, ybc, xcenter, ycenter, radius)
           in  abs (xab - xcenter) < eps && abs (xbc - xcenter) < eps
               && abs (yab - ycenter) < eps && abs (ybc - ycenter) < eps
       _ -> False
@@ -249,12 +253,13 @@ loop : List Site -> List (Event Site) -> (List (String,  List Site, List (Event 
 loop sites0 events0 =
   let go (acc, edges) sites events =
     case events of
-      [] -> let edges1 = findlastVertices (-10) sites edges
+      [] -> let edges1 = findlastVertices (-20) sites edges
             in (("End", sites, events)::acc, edges1)
       (event::r) ->
         let yd = eventY event
-            l = log "sites ok" <| (checkSiteSMonotony yd sites, yd, sites)
+            l = log "pre sites ok" <| (checkSiteSMonotony yd sites, yd, siteSummary sites)
             (msg, sites1, edges1, r1, _, changed) = processOneEvent edges sites event r
+            l1 = log "after sites ok" <| (checkSiteSMonotony yd sites, yd-1, siteSummary sites1)
             r3 =  if sites /= sites1
                   then  let r2 = removeCircleEvents r1
                             ces = findCircleEvents yd sites1
@@ -363,7 +368,8 @@ checkSiteSMonotony yd sites0 =
               Just (x, _) ->
                 if x >= xcurrent
                 then go x (b::r)
-                else False
+                else  let l = log "site false: " (xcurrent, x)
+                      in False
   in  go -100000000 sites0
 
 eventY event =

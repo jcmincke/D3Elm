@@ -38,8 +38,8 @@ insertEvent comparer evt evts0 =
           GT -> go (h::acc) r
           EQ -> case (evt, h) of
                   (PointEvent _, PointEvent _) -> L.reverse acc ++ (evt::evts)
-                  (PointEvent _, CircleEvent _ _ _ _ _) -> L.reverse acc ++ (h::evt::r)
-                  (CircleEvent _ _ _ _ _, PointEvent _) -> L.reverse acc ++ (evt::evts)
+                  (PointEvent _, CircleEvent _ _ _ _ _) -> L.reverse acc ++ (evt::evts)
+                  (CircleEvent _ _ _ _ _, PointEvent _) -> L.reverse acc ++ (h::evt::r)
                   (CircleEvent _ _ _ _ _ as ce1, CircleEvent _ _ _ _ _ as ce2) ->
                     if ce1 == ce2
                     then evts0
@@ -52,45 +52,45 @@ isMiddleArc _ s a b c =
       (Site _ ((xb, yb) as pb)) = b
       (Site _ ((xc, yc) as pc)) = c
       (Site _ (x, y)) = s
-      yai = parabola y pa x
-      ybi = parabola y pb x
       yci = parabola y pc x
   in  if a == c
-      then  if ybi <= yai
-            then ArcFound (x, ybi)
-            else  if xb < x
-                  then OnRight
-                  else OnLeft
-      else  if x < xa
-            then OnLeft
-            else if x > xc
-                 then OnRight
-                 else  if ybi <= yai && ybi <= yci
-                       then ArcFound (x, ybi)
-                       else  if yai < ybi && yai < yci
-                             then OnLeft
-                             else OnRight
+      then  let yai = parabola y pa x
+                ybi = parabola y pb x
+            in  if ybi <= yai
+                then ArcFound (x, ybi)
+                else  if xb < x
+                      then OnRight
+                      else OnLeft
+      else  let imab = parabolaIntersection y pa pb
+                imbc = parabolaIntersection y pb pc
+            in  case (imab, imbc) of
+                  (Just (xab, _), Just (xbc, _)) ->
+                    if xab <= x && x <= xbc
+                    then  let ybi = parabola y pb x
+                          in ArcFound (x, ybi)
+                    else  if x < xab
+                          then OnLeft
+                          else OnRight
+                  _ -> OnLeft  -- should never happen
 
 isBoundaryArc _ s side a b =
   case side of
     OpenOnRight ->
-      let (Site _ pa) = a
-          (Site _ ((xb, _) as pb)) = b
+      let (Site _ ((xa, _) as pa)) = a
+          (Site _ pb) = b
           (Site _ (x, y)) = s
           yai = parabola y pa x
           ybi = parabola y pb x
-      in  if ybi <= yai
+      in  if xa <= x && ybi <= yai
           then ArcFound (x, ybi)
           else OnLeft
     OpenOnLeft ->
-      deede
-      --  verifier: bug quand point est fortement à droite de b , il coupe a -> faux positif
       let (Site _ pa) = a
           (Site _ ((xb, _) as pb)) = b
           (Site _ (x, y)) = s
           yai = parabola y pa x
           ybi = parabola y pb x
-      in  if yai <= ybi
+      in  if x <= xb && yai <= ybi -- make sure the x is not on the left branch of a
           then ArcFound (x, yai)
           else OnRight
 
