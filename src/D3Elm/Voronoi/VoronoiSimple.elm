@@ -13,37 +13,19 @@ import Tuple exposing (..)
 import D3Elm.Common exposing (..)
 import D3Elm.Voronoi.Common exposing (..)
 
-{-}
-type alias Point = {
-    x : Float
-    , y : Float
-  }
-
-type Site = Site Int Point
-
-
-type Tree site =
-  Break (Tree site) (Tree site) site site
-  | Leaf site
-
-
-type ArcPred =
-  ArcFound
-  |OnLeft
-  |Onright
--}
-
--- insertArc : site -> (site -> site -> site -> ArcPred) -> (OpenOn -> site -> site -> ArcPred)
---   -> Tree site -> Tree site
-
-type Vertex =
-  VertexStart Point
-  |VertexEnd Point
+--type Vertex =
+--  VertexStart Point
+--  |VertexEnd Point
 
 
 type Edge =
-  Edge Site Site (Maybe Point) (Maybe Point)
-  | BadEdge Site Site String
+  UndefinedEdge Site Site                   -- edge without any know vertices
+  |UnBoundedOpenEdge Site Site Point        -- edge with 1st vertex not being a center
+  |UnBoundedEdge Site Site Point Point      -- edge with vertices are not centers
+  |HalfEdge Site Site Point Point           -- 1st vertex = center, 2nd vertex
+  |Edge Site Site Point Point               -- Both vertices are centers
+  |OpenEdge Site Site Point                 -- edge whit 1 know vertex (this one being a center)
+  |BadEdge Site Site String
 
 type alias EdgeMap = D.Dict (Int, Int) Edge
 
@@ -80,7 +62,7 @@ insertArc ns intersectPredClosed intersectPredOpen sites0 events0 edges0 =
   in case sites0 of
     [] -> ([ns], events0, edges0)
     [a] ->  let edges1 = insertUndefinedEdge a ns edges0
-            in ([a,ns,a], events0, edges1)
+            in  ([a,ns,a], events0, edges1)
     (a::b::r) ->
       case intersectPredOpen OpenOnLeft a b of
         ArcFound vertex ->
@@ -195,25 +177,10 @@ removeArc2 pcenter radius ar br cr sites0 events0 edges0 =
 
 siteSummary sites = L.map (\(Site i _) -> i) sites
 
--- buggy?
-
-{-
-checkCircleEvent2 : Site -> Site -> Site -> (Float, Float) -> Float -> Bool
-checkCircleEvent2 a b c (xcenter, ycenter) radius =
-  let yd = ycenter - radius
-      (Site ia pa) = a
-      (Site ib pb) = b
-      (Site ic pc) = c
-      d1 = parabolaDeriv yd pa xcenter
-      d2 = parabolaDeriv yd pb xcenter
-      d3 = parabolaDeriv yd pc xcenter
-      l = log "derivée" (d1, d2, d3, ia, ib, ic)
-  in  d1 >= d2 && d2 >= d3
--}
 
 checkCircleEvent : Site -> Site -> Site -> (Float, Float) -> Float -> Bool
 checkCircleEvent a b c (xcenter, ycenter) radius =
-  let eps = 1e-3
+  let eps = 1e-8
       yd = ycenter - radius
       (Site _ pa) = a
       (Site _ pb) = b
@@ -306,9 +273,10 @@ processOneEvent sites0 remainingEvents edges0 event  =
 
 loop : List Site -> List (Event Site) -> EdgeMap
 loop sites0 events0 =
-  let go sites edges events =
+  let go yd sites edges events =
     case events of
-      [] -> let edges1 = findlastVertices (-20) sites edges
+      [] -> let l = log "Fini" ()
+                edges1 = findlastVertices (yd - 1) sites edges
             in edges1
       (event::revents) ->
         let yd = eventY event
@@ -322,8 +290,8 @@ loop sites0 events0 =
 --                    in revts2
 --              else revents
             l1 = log "after sites ok" <| (checkSiteSMonotony yd sites1, yd-1, siteSummary sites1)
-        in go sites1 edges1 revents1
-  in go sites0 empty events0
+        in go yd sites1 edges1 revents1
+  in go 2 sites0 empty events0
 
 
 
@@ -339,6 +307,16 @@ removeCircleEvents evts0 =
           _ -> h :: go r
   in go evts0
 
+makeSites xs =
+  let sxs = L.sortBy second xs
+      go i acc xs =
+          case xs of
+            [] -> acc
+            (h::r) -> go (i+1) (Site i h :: acc) r
+  in go 0 [] sxs
+
+
+
 
 insertEdges : List (Site, Site, Point) -> EdgeMap -> EdgeMap
 insertEdges vertices edges =
@@ -353,34 +331,24 @@ insertEdge a b p edges =
       (Site ib pb) = b
       (ia1, ib1, a1, b1) = if (ia < ib) then (ia, ib, a, b) else (ib, ia, b, a)
   in case D.get (ia1, ib1) edges of
-      Nothing -> D.insert (ia1, ib1) (Edge a1 b1 (Just p) Nothing) edges
-      Just (BadEdge _ _ _ ) -> edges -- D.insert (ia1, ib1) (BadEdge a1 b1 (s++"\insert for bad edge")) edges
-      Just (Edge a1 b1 p1m p2m) ->
-        case p1m of
-          Just _ ->
-            case p2m of
-              Just _ -> log "bad edge" <| D.insert (ia1, ib1) (BadEdge a1 b1 "double second point") edges
-              Nothing -> D.insert (ia1, ib1) (Edge a1 b1 p1m (Just p)) edges
-          Nothing ->
-            case p2m of
-              Just _ -> log "bad edge" <| D.insert (ia1, ib1) (BadEdge a1 b1 "no first point but second point") edges
-              Nothing -> D.insert (ia1, ib1) (Edge a1 b1 (Just p) Nothing) edges
+      Just (UndefinedEdge a b) -> D.insert (ia1, ib1) (OpenEdge a b p) edges
+      Just (OpenEdge a b p1) -> D.insert (ia1, ib1) (Edge a b p1 p) edges
+      Nothing -> D.insert (ia1, ib1) (OpenEdge a b p) edges
+
+      _ -> log "bad edge" <|  edges
 
 
 
---insertEdge : Site -> Site -> Point -> EdgeMap -> EdgeMap
---insertEdge a b p edges =
---  let (Site ia pa) = a
---      (Site ib pb) = b
---      (ia1, ib1) = if (ia < ib) then (ia, ib) else (ib, ia)
---  in case D.get (ia1, ib1) edges of
---      Nothing ->
---        D.insert (ia1, ib1) (Edge a b (OpenEdge p)) edges
---      Just (Edge _ _ (OpenEdge ps)) ->
---        if p /= ps
---        then D.insert (ia1, ib1) (Edge a b (ClosedEdge ps p)) edges
---        else edges
---      _ -> edges
+inserLastVertex : Site -> Site -> Point -> EdgeMap -> EdgeMap
+inserLastVertex a b p edges =
+  let (Site ia pa) = a
+      (Site ib pb) = b
+      (ia1, ib1, a1, b1) = if (ia < ib) then (ia, ib, a, b) else (ib, ia, b, a)
+  in case D.get (ia1, ib1) edges of
+      Just (UndefinedEdge a1 b1) -> D.insert (ia1, ib1) (UnBoundedOpenEdge a1 b1 p) edges
+      Just (UnBoundedOpenEdge a1 b1 p1) -> D.insert (ia1, ib1) (UnBoundedEdge a1 b1 p1 p) edges
+      Just (OpenEdge a1 b1 p1) -> D.insert (ia1, ib1) (HalfEdge a1 b1 p1 p) edges
+      _ -> log "bad half edge" <| edges
 
 
 insertUndefinedEdge : Site -> Site -> EdgeMap -> EdgeMap
@@ -389,9 +357,10 @@ insertUndefinedEdge a b edges =
       (Site ib pb) = b
   in  if (ia < ib)
       then  case D.get (ia, ib) edges of
-            Just _ -> log "bad edge" <| D.insert (ia, ib) (BadEdge a b "undefined edge: doublon") edges
-            Nothing -> D.insert (ia, ib) (Edge a b Nothing Nothing) edges
+            Just _ -> log "bad edge" edges
+            Nothing -> D.insert (ia, ib) (UndefinedEdge a b) edges
       else D.insert (ib, ib) (BadEdge a b "undefined edge: bad order") edges
+
 
 
 findlastVertices yd sites0 edges0 =
@@ -406,7 +375,7 @@ findlastVertices yd sites0 edges0 =
               Nothing -> go edges (b::r)
               Just (x, _) ->
                 let y = parabola yd pa x
-                    edges1 = insertEdge a b (x, y) edges
+                    edges1 = inserLastVertex a b (x, y) edges
                 in go edges1 (b::r)
   in go edges0 sites0
 

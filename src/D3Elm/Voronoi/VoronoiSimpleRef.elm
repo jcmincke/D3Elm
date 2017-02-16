@@ -40,10 +40,14 @@ type Vertex =
   VertexStart Point
   |VertexEnd Point
 
-
 type Edge =
-  Edge Site Site (Maybe Point) (Maybe Point)
-  | BadEdge Site Site String
+  UndefinedEdge Site Site                   -- edge without any know vertices
+  |UnBoundedOpenEdge Site Site Point        -- edge with 1st vertex not being a center
+  |UnBoundedEdge Site Site Point Point      -- edge with vertices are not centers
+  |HalfEdge Site Site Point Point           -- 1st vertex = center, 2nd vertex
+  |Edge Site Site Point Point               -- Both vertices are centers
+  |OpenEdge Site Site Point                 -- edge whit 1 know vertex (this one being a center)
+  |BadEdge Site Site String
 
 type alias EdgeMap = D.Dict (Int, Int) Edge
 
@@ -140,7 +144,7 @@ checkCircleEvent2 a b c (xcenter, ycenter) radius =
 
 checkCircleEvent : Site -> Site -> Site -> (Float, Float) -> Float -> Bool
 checkCircleEvent a b c (xcenter, ycenter) radius =
-  let eps = 1e-3
+  let eps = 1e-6
       yd = ycenter - radius
       (Site _ pa) = a
       (Site _ pb) = b
@@ -164,9 +168,9 @@ addCircleEvent yd a b c events =
       (Site _ pc) = c
       (xc, yc, radius) = circumCircle pa pb pc
       evt = CircleEvent a b c (xc, yc) radius
-      -- bo = checkCircleEvent a b c (xc, yc) radius
+      bo = checkCircleEvent a b c (xc, yc) radius
 
-  in  if (yc - radius) <= yd -- && bo
+  in  if (yc - radius) <= yd && bo
       then insertEvent eventComparer evt events
       else events
 
@@ -249,7 +253,7 @@ processOneEvent edges sites event remainingEvents =
 --          False -> let _ = log "bad circle" <| event
 --                   in ("", sites, edges, remainingEvents, yc - radius, False)
 --
-loop : List Site -> List (Event Site) -> (List (String,  List Site, List (Event Site)), EdgeMap)
+--loop : List Site -> List (Event Site) -> (List (String,  List Site, List (Event Site)), EdgeMap)
 loop sites0 events0 =
   let go (acc, edges) sites events =
     case events of
@@ -266,7 +270,7 @@ loop sites0 events0 =
                         in L.foldl (\ce acc -> insertEvent eventComparer ce acc) r2 ces
                   else r1
         in go ((msg, sites1, r3)::acc, edges1) sites1 r3
-  in go ([], empty) sites0 events0
+  in second <| go ([], empty) sites0 events0
 
 
 
@@ -282,6 +286,52 @@ removeCircleEvents evts0 =
   in go evts0
 
 
+insertEdges : List (Site, Site, Point) -> EdgeMap -> EdgeMap
+insertEdges vertices edges =
+  let proc (a, b, p) acc  = insertEdge a b p acc
+  in L.foldl proc edges vertices
+
+
+
+insertEdge : Site -> Site -> Point -> EdgeMap -> EdgeMap
+insertEdge a b p edges =
+  let (Site ia pa) = a
+      (Site ib pb) = b
+      (ia1, ib1, a1, b1) = if (ia < ib) then (ia, ib, a, b) else (ib, ia, b, a)
+  in case D.get (ia1, ib1) edges of
+      Just (UndefinedEdge a b) -> D.insert (ia1, ib1) (OpenEdge a b p) edges
+      Just (OpenEdge a b p1) -> D.insert (ia1, ib1) (Edge a b p1 p) edges
+      Nothing -> D.insert (ia1, ib1) (OpenEdge a b p) edges
+
+      _ -> log "bad edge" <|  edges
+
+
+
+inserLastVertex : Site -> Site -> Point -> EdgeMap -> EdgeMap
+inserLastVertex a b p edges =
+  let (Site ia pa) = a
+      (Site ib pb) = b
+      (ia1, ib1, a1, b1) = if (ia < ib) then (ia, ib, a, b) else (ib, ia, b, a)
+  in case D.get (ia1, ib1) edges of
+      Just (UndefinedEdge a1 b1) -> D.insert (ia1, ib1) (UnBoundedOpenEdge a1 b1 p) edges
+      Just (UnBoundedOpenEdge a1 b1 p1) -> D.insert (ia1, ib1) (UnBoundedEdge a1 b1 p1 p) edges
+      Just (OpenEdge a1 b1 p1) -> D.insert (ia1, ib1) (HalfEdge a1 b1 p1 p) edges
+      _ -> log "bad half edge" <| edges
+
+
+insertUndefinedEdge : Site -> Site -> EdgeMap -> EdgeMap
+insertUndefinedEdge a b edges =
+  let (Site ia pa) = a
+      (Site ib pb) = b
+  in  if (ia < ib)
+      then  case D.get (ia, ib) edges of
+            Just _ -> log "bad edge" edges
+            Nothing -> D.insert (ia, ib) (UndefinedEdge a b) edges
+      else D.insert (ib, ib) (BadEdge a b "undefined edge: bad order") edges
+
+
+
+{-}
 insertEdges : List (Site, Site, Point) -> EdgeMap -> EdgeMap
 insertEdges vertices edges =
   let proc (a, b, p) acc  = insertEdge a b p acc
@@ -334,7 +384,7 @@ insertUndefinedEdge a b edges =
             Just _ -> log "bad edge" <| D.insert (ia, ib) (BadEdge a b "undefined edge: doublon") edges
             Nothing -> D.insert (ia, ib) (Edge a b Nothing Nothing) edges
       else D.insert (ib, ib) (BadEdge a b "undefined edge: bad order") edges
-
+-}
 
 findlastVertices yd sites0 edges0 =
   let go edges sites =
