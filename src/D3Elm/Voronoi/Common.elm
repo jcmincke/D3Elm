@@ -233,7 +233,7 @@ type BoxIntersection =
   |Intersection BoxSide (Float, Float)
 
 isInsideBox (Box xtl ytl xbr ybr) (x, y) =
-    xtl <= x && x <= xbr && ybr <= y && y <= ytl
+    (xtl <= x && x <= xbr && ybr <= y && y <= ytl)
 
 isOutsideBox b p = not (isInsideBox b p)
 
@@ -252,7 +252,7 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
   in case side of
         BoxSideLeft ->
           let t = xFormula xtl
-          in  if 0 <= t && t <= 1
+          in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if ybr <= yi && yi <= ytl
                         then Intersection side (xtl, yi)
@@ -260,7 +260,7 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
               else NoIntersection
         BoxSideTop ->
           let t = yFormula ytl
-          in  if 0 <= t && t <= 1
+          in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if xtl <= xi && xi <= xbr
                         then Intersection side (xi, ytl)
@@ -268,7 +268,7 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
               else NoIntersection
         BoxSideRight ->
           let t = xFormula xbr
-          in  if 0 <= t && t <= 1
+          in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if ybr <= yi && yi <= ytl
                         then Intersection side (xbr, yi)
@@ -276,7 +276,7 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
               else NoIntersection
         BoxSideBottom ->
           let t = yFormula ybr
-          in  if 0 <= t && t <= 1
+          in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if xtl <= xi && xi <= xbr
                         then Intersection side (xi, ybr)
@@ -285,12 +285,12 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
 
 
 
-intersectBox (Box xl yl xr yr as box) p1 p2 =
+intersectBox box p1 p2 =
   let eps = 1e-6
       (x1, y1) = p1
       (x2, y2) = p2
       sides =
-        if (abs (x1 - x2) > eps)
+        if abs (x1 - x2) > eps
         then  if abs (y1 - y2) > eps
               then [BoxSideLeft, BoxSideTop, BoxSideRight, BoxSideBottom]
               else [BoxSideLeft, BoxSideRight]
