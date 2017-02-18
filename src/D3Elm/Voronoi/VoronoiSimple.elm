@@ -4,6 +4,7 @@ import Debug exposing (log)
 
 import List as L exposing (append, foldl, reverse, maximum, map, head, sortWith, reverse)
 import Dict as D exposing (insert, empty, Dict, get)
+import Set as S exposing (..)
 import Maybe exposing (withDefault)
 import Tuple exposing (..)
 
@@ -28,6 +29,48 @@ type Edge =
   |BadEdge Site Site String
 
 type alias EdgeMap = D.Dict (Int, Int) Edge
+
+type CEdge =
+  CEdge Site Site Point Point
+
+type alias CEdgeMap = D.Dict (Int, Int) CEdge
+
+transformEdges : EdgeMap -> CEdgeMap
+transformEdges edges =
+  let proc _ e =
+        case e of
+        UnBoundedEdge a b ps pe -> CEdge a b ps pe
+        HalfEdge a b ps pe -> CEdge a b ps pe
+        Edge a b ps pe -> CEdge a b ps pe
+        UndefinedEdge a b -> log "c-edge: error : UndefinedEdge" (CEdge a b (0,0) (0,0))
+        UnBoundedOpenEdge a b _ -> log "c-edge: error : UnBoundedOpenEdge" (CEdge a b (0,0) (0,0))
+        OpenEdge a b _ -> log "c-edge: error : OpenEdge" (CEdge a b (0,0) (0,0))
+        BadEdge a b e -> log ("c-edge: error : BadEdge "++e) (CEdge a b (0,0) (0,0))
+  in D.map proc edges
+
+type Cell = Cell Site (Set Point)
+type alias CellMap = D.Dict Int Cell
+
+createCells cedges =
+  let proc (ia, ib) e acc =
+        let (CEdge a b ps pe) = e
+            acc1 = case D.get ia acc of
+                    Just (Cell a pts) ->
+                      let pts1 = S.insert ps pts
+                          pts2 = S.insert pe pts1
+                      in  D.insert ia (Cell a pts2) acc
+                    Nothing -> D.insert ia (Cell a (S.fromList [ps, pe])) acc
+            acc2 = case D.get ib acc1 of
+                    Just (Cell b pts) ->
+                      let pts1 = S.insert ps pts
+                          pts2 = S.insert pe pts1
+                      in  D.insert ib (Cell b pts2) acc1
+                    Nothing -> D.insert ib (Cell b (S.fromList [ps, pe])) acc1
+        in acc2
+  in D.foldl proc D.empty cedges
+
+
+
 
 insertArc :
   Site
@@ -291,7 +334,7 @@ loop sites0 events0 =
 --              else revents
             l1 = log "after sites ok" <| (checkSiteSMonotony yd sites1, yd-1, siteSummary sites1)
         in go yd sites1 edges1 revents1
-  in go 2 sites0 empty events0
+  in go 2 sites0 D.empty events0
 
 
 
@@ -359,7 +402,7 @@ insertUndefinedEdge a b edges =
       then  case D.get (ia, ib) edges of
             Just _ -> log "bad edge" edges
             Nothing -> D.insert (ia, ib) (UndefinedEdge a b) edges
-      else D.insert (ib, ib) (BadEdge a b "undefined edge: bad order") edges
+      else  insertUndefinedEdge b a edges --M.insert (ib, ib) (BadEdge a b "undefined edge: bad order") edges
 
 
 

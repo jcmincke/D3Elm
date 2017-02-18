@@ -85,8 +85,9 @@ edges2 =
 
 edges =
   let events = L.map (\p -> PointEvent p) sites
-  in loop [] ( events)
-
+      edges = loop [] ( events)
+      cedges = transformEdges edges
+  in cedges
 
 
 --log =
@@ -132,11 +133,11 @@ showEdges edges =
 --                --  (S.path [SA.d dstr, SA.stroke "purple", SA.strokeWidth "1", SA.fill "none"] [], "Pt:"++toString (x,y, xm, ym))
 --                (S.circle [SA.cx (toString x), SA.cy (toString y), SA.r "7", SA.fill "black"] [], "Pt:"++toString (x,y))
 --                ]
-          Edge _ _ ps pe -> showEdge ps pe
-          UnBoundedEdge _ _ ps pe -> showEdge ps pe
-          HalfEdge _ _ ps pe -> showEdge ps pe
-
-          _ -> log "edge non reconnu" [] --Edge _ _ (Just ps) (Just pe) ->
+          CEdge _ _ ps pe -> showEdge ps pe
+--          UnBoundedEdge _ _ ps pe -> showEdge ps pe
+--          HalfEdge _ _ ps pe -> showEdge ps pe
+--
+--          _ -> log "edge non reconnu" [] --Edge _ _ (Just ps) (Just pe) ->
 
 --            in (S.path [] [], "Peg:"++toString (xs,ys, xe, ye))
   in L.concat <| L.map proc es
@@ -185,7 +186,7 @@ type Edge =
 mainHtml : Html.Html msg
 mainHtml =
   let  d = "" --(basis data path0).thePath
-       l = log "verif edges" (verifEdges edges)
+       --l = log "verif edges" (verifEdges edges)
   in div []
           (svg  [ width "1000", height "500", viewBox "0 0 1000 600" ]
             ( points data ++ (L.map first <| showEdges edges) )

@@ -174,6 +174,144 @@ circumCircle (x1, y1) (x2, y2) (x3, y3) =
           in (xc, yc, r)
 
 
+orderByAngles : (Float, Float) -> List (Float, Float) -> List (Float, Float)
+orderByAngles (xc, yc) pts =
+  let eps = 1e-5
+      proc (x, y) =
+        let dx = x - xc
+            dy = y - yc
+            angle = if abs dx > eps
+                    then  let ta = dy / dx
+                              a = atan ta
+                              a1 = if dx > 0 then a else a + pi
+                          in a1
+                    else  let dx1 = dy
+                              dy1 = -dx
+                              cta = dx1 / dy1
+                              a = atan cta
+                              a1 = if dx1 > 0 then a else a + pi
+                          in a1
+            angle1 =  if angle >= 0
+                      then  if angle <= 2 * pi
+                            then angle
+                            else angle - 2 * pi
+                      else  angle + 2 * pi
+        in (angle1, (xc, yc))
+      pts1 = L.map second <| L.sortBy first <| L.map proc pts
+  in pts1
+
+
+
+type BoxSide =
+  BoxSideLeft
+  |BoxSideTop
+  |BoxSideRight
+  |BoxSideBottom
+
+nextBoxSide s =
+  case s of
+    BoxSideLeft -> BoxSideTop
+    BoxSideTop -> BoxSideRight
+    BoxSideRight -> BoxSideBottom
+    BoxSideBottom -> BoxSideLeft
+
+previousBoxSide s =
+  case s of
+    BoxSideLeft -> BoxSideBottom
+    BoxSideBottom -> BoxSideRight
+    BoxSideRight -> BoxSideTop
+    BoxSideTop -> BoxSideLeft
+
+
+type Box = Box Float Float Float Float
+
+-- x(t) = x1 (1-t) + x2 t  => x(t) = x1 + (x2-x1) t  => t = (x-x1)/(x2-x1)
+-- y(t) = y1 (1-t) + y2 t  => y(t) = y1 + (y2-y1) t  => t = (y-y1)/(y2-y1)
+
+type BoxIntersection =
+  NoIntersection
+  |Intersection BoxSide (Float, Float)
+
+isInsideBox (Box xtl ytl xbr ybr) (x, y) =
+    xtl <= x && x <= xbr && ybr <= y && y <= ytl
+
+isOutsideBox b p = not (isInsideBox b p)
+
+--bothInsideBox (Box xtl ytl xbr ybr) (x1, y1) (x2)
+
+
+linearPrametric (x1, y1) (x2, y2) t =
+    (x1 + (x2-x1) * t, y1 + (y2-y1) * t)
+
+
+intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
+  let (x1, y1) = p1
+      (x2, y2) = p2
+      xFormula x = (x-x1)/(x2-x1)
+      yFormula y = (y-y1)/(y2-y1)
+  in case side of
+        BoxSideLeft ->
+          let t = xFormula xtl
+          in  if 0 <= t && t <= 1
+              then  let (xi, yi) = linearPrametric p1 p2 t
+                    in  if ybr <= yi && yi <= ytl
+                        then Intersection side (xtl, yi)
+                        else NoIntersection
+              else NoIntersection
+        BoxSideTop ->
+          let t = yFormula ytl
+          in  if 0 <= t && t <= 1
+              then  let (xi, yi) = linearPrametric p1 p2 t
+                    in  if xtl <= xi && xi <= xbr
+                        then Intersection side (xi, ytl)
+                        else NoIntersection
+              else NoIntersection
+        BoxSideRight ->
+          let t = xFormula xbr
+          in  if 0 <= t && t <= 1
+              then  let (xi, yi) = linearPrametric p1 p2 t
+                    in  if ybr <= yi && yi <= ytl
+                        then Intersection side (xbr, yi)
+                        else NoIntersection
+              else NoIntersection
+        BoxSideBottom ->
+          let t = yFormula ybr
+          in  if 0 <= t && t <= 1
+              then  let (xi, yi) = linearPrametric p1 p2 t
+                    in  if xtl <= xi && xi <= xbr
+                        then Intersection side (xi, ybr)
+                        else NoIntersection
+              else NoIntersection
+
+
+
+intersectBox (Box xl yl xr yr as box) p1 p2 =
+  let eps = 1e-6
+      (x1, y1) = p1
+      (x2, y2) = p2
+      sides =
+        if (abs (x1 - x2) > eps)
+        then  if abs (y1 - y2) > eps
+              then [BoxSideLeft, BoxSideTop, BoxSideRight, BoxSideBottom]
+              else [BoxSideLeft, BoxSideRight]
+        else [BoxSideTop, BoxSideBottom]
+      proc side r =
+        case r of
+          NoIntersection -> intersectSide box side p1 p2
+          _ -> r
+  in  if isInsideBox box p1
+      then  if isInsideBox box p2
+            then NoIntersection
+            else L.foldl proc NoIntersection sides
+      else NoIntersection
+
+
+
+
+
+
+
+
 
 
 
