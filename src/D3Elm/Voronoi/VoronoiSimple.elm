@@ -48,27 +48,39 @@ transformEdges edges =
         BadEdge a b e -> log ("c-edge: error : BadEdge "++e) (CEdge a b (0,0) (0,0))
   in D.map proc edges
 
-type Cell = Cell Site (Set Point)
-type alias CellMap = D.Dict Int Cell
+type UnorderedCell = UnorderedCell Site (Set Point)
+type alias GenericCellMap c = D.Dict Int c
 
+type Cell = Cell Site (List Point)
+type alias CellMap = GenericCellMap Cell
+
+createCells : CEdgeMap -> CellMap
 createCells cedges =
   let proc (ia, ib) e acc =
         let (CEdge a b ps pe) = e
             acc1 = case D.get ia acc of
-                    Just (Cell a pts) ->
+                    Just (UnorderedCell a pts) ->
                       let pts1 = S.insert ps pts
                           pts2 = S.insert pe pts1
-                      in  D.insert ia (Cell a pts2) acc
-                    Nothing -> D.insert ia (Cell a (S.fromList [ps, pe])) acc
+                      in  D.insert ia (UnorderedCell a pts2) acc
+                    Nothing -> D.insert ia (UnorderedCell a (S.fromList [ps, pe])) acc
             acc2 = case D.get ib acc1 of
-                    Just (Cell b pts) ->
+                    Just (UnorderedCell b pts) ->
                       let pts1 = S.insert ps pts
                           pts2 = S.insert pe pts1
-                      in  D.insert ib (Cell b pts2) acc1
-                    Nothing -> D.insert ib (Cell b (S.fromList [ps, pe])) acc1
+                      in  D.insert ib (UnorderedCell b pts2) acc1
+                    Nothing -> D.insert ib (UnorderedCell b (S.fromList [ps, pe])) acc1
         in acc2
-  in D.foldl proc D.empty cedges
-
+      cells1 = D.foldl proc D.empty cedges
+      proc1 k (UnorderedCell (Site _ xc as site) pointSet) =
+        let points = S.toList pointSet
+            points1 = case orderByAngles xc points of
+                      [] -> []
+                      [p] -> [p]
+                      (h::r) -> (h::r) ++ [h]
+        in  Cell site points1
+      cells2 = D.map proc1 cells1
+  in cells2
 
 
 

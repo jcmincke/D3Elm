@@ -228,16 +228,102 @@ type Box = Box Float Float Float Float
 -- x(t) = x1 (1-t) + x2 t  => x(t) = x1 + (x2-x1) t  => t = (x-x1)/(x2-x1)
 -- y(t) = y1 (1-t) + y2 t  => y(t) = y1 + (y2-y1) t  => t = (y-y1)/(y2-y1)
 
+type Direction =
+  DirIn
+  |DirOut
+
 type BoxIntersection =
   NoIntersection
   |Intersection BoxSide (Float, Float)
+
+type IPoint =
+  InsidePoint Point
+  |OusidePoint Point
+  |BoundaryPoint BoxSide Direction Point
+
+addBoxCorners (Box xtl ytl xbr ybr) s1 s2 =
+  let corner s =
+        case s of
+          BoxSideLeft -> (xtl, ybr)
+          BoxSideBottom -> (xbr, ybr)
+          BoxSideRight -> (xbr, ytl)
+          BoxSideTop -> (xtl, ytl)
+      go s1 s2 =
+        if s1 == s2
+        then []
+        else  let c = corner s1
+                  ns1 = previousBoxSide s1
+              in  c :: go ns1 s2
+  in go s1 s2
+
+
+clipCell : Box -> List Point -> List Point
+clipCell box points0 =
+  let getPoint p =
+        case p of
+          InsidePoint p -> p
+          OusidePoint p -> p
+          BoundaryPoint _ _ p -> p
+      isIn p =
+        case p of
+          InsidePoint _ -> True
+          OusidePoint _ -> False
+          BoundaryPoint _ _ _ -> False
+
+      go points =
+          case points of
+            [] -> []
+            [p] -> if isInsideBox box p then [InsidePoint p] else [OusidePoint p]
+            (p1::p2::[]) ->
+              let ipoints = intersectBox box p1 p2
+                  p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
+                  p2p = if isInsideBox box p2 then InsidePoint p2 else OusidePoint p2
+              in p1p::(ipoints ++ [p2p])
+            (p1::p2::r) ->
+              let ipoints = intersectBox box p1 p2
+                  p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
+              in p1p::ipoints
+      ipoints = go points0
+      -- eliminate outside points and add corners
+      go1 ipoints =
+        case ipoints of
+          [] -> []
+          [ip] -> if isIn ip then [getPoint ip] else []
+          (ip1::ip2::[]) ->
+            case (ip1, ip2) of
+              (InsidePoint p1, InsidePoint p2) -> [p1, p2]
+              (InsidePoint _, OusidePoint _) -> [] -- can never happen
+              (InsidePoint _, BoundaryPoint _ _ _) -> [] -- can never happen
+              (OusidePoint _, InsidePoint _) ->  [] -- can never happen
+              (OusidePoint _, OusidePoint _) ->  [] -- can happen
+              (OusidePoint _, BoundaryPoint _ _ _) -> [] -- can never happen
+              (BoundaryPoint _ _ p1, InsidePoint p2) -> [p1, p2]
+              (BoundaryPoint _ _ p1, OusidePoint _) -> [p1]
+              (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> [p1, p2]
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ [p2]
+              _ -> [] -- can never happen
+          (ip1::ip2::r) ->
+            case (ip1, ip2) of
+              (InsidePoint p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
+              (InsidePoint _, OusidePoint _) -> [] -- can never happen
+              (InsidePoint p1, BoundaryPoint _ _ _) -> p1 :: go1 (ip2::r)
+              (OusidePoint _, InsidePoint _) ->  [] -- can never happen
+              (OusidePoint _, OusidePoint _) -> go1 r
+              (OusidePoint _, BoundaryPoint _ _ _) -> go1 (ip2::r)
+              (BoundaryPoint _ _ p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
+              (BoundaryPoint _ _ p1, OusidePoint _) -> p1 :: go1 r
+              (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> p1 :: p2 :: go1 r
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ [p2]
+              _ -> [] -- can never happen
+
+
+  in go1 ipoints
 
 isInsideBox (Box xtl ytl xbr ybr) (x, y) =
     (xtl <= x && x <= xbr && ybr <= y && y <= ytl)
 
 isOutsideBox b p = not (isInsideBox b p)
 
---bothInsideBox (Box xtl ytl xbr ybr) (x1, y1) (x2)
 
 
 linearPrametric (x1, y1) (x2, y2) t =
@@ -255,33 +341,33 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
           in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if ybr <= yi && yi <= ytl
-                        then Intersection side (xtl, yi)
-                        else NoIntersection
-              else NoIntersection
+                        then Just (side, t, (xtl, yi))
+                        else Nothing
+              else Nothing
         BoxSideTop ->
           let t = yFormula ytl
           in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if xtl <= xi && xi <= xbr
-                        then Intersection side (xi, ytl)
-                        else NoIntersection
-              else NoIntersection
+                        then Just (side, t, (xi, ytl))
+                        else Nothing
+              else Nothing
         BoxSideRight ->
           let t = xFormula xbr
           in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if ybr <= yi && yi <= ytl
-                        then Intersection side (xbr, yi)
-                        else NoIntersection
-              else NoIntersection
+                        then Just (side, t, (xbr, yi))
+                        else Nothing
+              else Nothing
         BoxSideBottom ->
           let t = yFormula ybr
           in  if 0 <= t && t <= 1.001
               then  let (xi, yi) = linearPrametric p1 p2 t
                     in  if xtl <= xi && xi <= xbr
-                        then Intersection side (xi, ybr)
-                        else NoIntersection
-              else NoIntersection
+                        then Just (side, t, (xi, ybr))
+                        else Nothing
+              else Nothing
 
 
 
@@ -295,15 +381,38 @@ intersectBox box p1 p2 =
               then [BoxSideLeft, BoxSideTop, BoxSideRight, BoxSideBottom]
               else [BoxSideLeft, BoxSideRight]
         else [BoxSideTop, BoxSideBottom]
-      proc side r =
-        case r of
-          NoIntersection -> intersectSide box side p1 p2
-          _ -> r
-  in  if isInsideBox box p1
-      then  if isInsideBox box p2
-            then NoIntersection
-            else L.foldl proc NoIntersection sides
-      else NoIntersection
+      proc side acc =
+        case intersectSide box side p1 p2 of
+          Just r -> r::acc
+          Nothing -> acc
+      ipoints =  L.sortBy (\(_, t, _) -> t) <| L.foldl proc [] sides
+      -- remove duplicate t
+      removeDuplicate l =
+        case l of
+          [] -> []
+          [i] -> [i]
+          (((_, t1, _) as i1) :: ((_, t2, _) as i2) :: r) ->
+            if abs (t1 - t2) < eps
+            then i1 :: removeDuplicate r
+            else i1 :: removeDuplicate (i2::r)
+      ipoints1 = removeDuplicate ipoints
+      -- add directions
+      dirs =  if isInsideBox box p1 then [DirOut, DirIn] else [DirIn, DirOut]
+      ipoints2 = case ipoints1 of
+        [] -> []
+        [(s, _, p)] ->  if isInsideBox box p1
+                        then [BoundaryPoint s DirOut p]
+                        else [BoundaryPoint s DirIn p]
+        [(s1, _, p1), (s2, _, t2)] -> [BoundaryPoint s1 DirIn p1, BoundaryPoint s2 DirOut p2]
+        _ -> []  -- should never happen
+  in  ipoints2
+
+
+  --if isInsideBox box p1
+  --    then  if isInsideBox box p2
+  --          then []
+  --          else L.foldl proc [] sides
+  --    else NoIntersection
 
 
 
