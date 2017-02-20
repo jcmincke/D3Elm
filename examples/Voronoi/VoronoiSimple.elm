@@ -72,22 +72,32 @@ filterDuplicateData events0 =
                      in go (acc) (b::r)
   in L.reverse <| (L.sortBy second  <| go [] events0)
 
-sites = makeSites data
-
-
-edges2 =
-  let events = L.map (\p -> PointEvent p) sites
-  in  if checkEvents events
-      then loop [] events
-      else D.empty
+--sites = makeSites data
+--
+--
+--edges2 =
+--  let events = L.map (\p -> PointEvent p) sites
+--  in  if checkEvents events
+--      then loop [] events
+--      else D.empty
 
 --events = filterDuplicateEvents <| L.map (\p -> PointEvent p) sites
 
-edges =
-  let events = L.map (\p -> PointEvent p) sites
-      edges = loop [] ( events)
-      cedges = transformEdges edges
-  in cedges
+--  let events = L.map (\p -> PointEvent p) sites
+--      edges = loop [] ( events)
+--      cedges = transformEdges edges
+--  in cedges
+
+cedges = voronoi data
+
+
+cellMap =
+  let c = createCells cedges
+      box = Box -0.2 1.2 2.2 -0.2
+      c1 = D.map (\_ (Cell site pts) -> Cell site (clipCell box pts)) c
+  in c1
+
+  -- clipCell : Box -> List Point -> List Point
 
 
 --log =
@@ -96,8 +106,27 @@ edges =
 --      sts = L.map (\(s, sites, _) -> (s, sites)) rs
 --  in L.reverse sts
 
+{-
 
-transform (x,y) = (10+x*400, 450-y*400)
+
+type UnorderedCell = UnorderedCell Site (Set Point)
+type alias GenericCellMap c = D.Dict Int c
+
+type Cell = Cell Site (List Point)
+type alias CellMap = GenericCellMap Cell
+
+
+
+type Cell = Cell Site (List Point)
+type alias CellMap = GenericCellMap Cell
+
+type CEdge =
+  CEdge Site Site Point Point
+
+type alias CEdgeMap = D.Dict (Int, Int) CEdge
+-}
+
+transform (x,y) = (10+x*300, 500-y*300)
 
 points  data =
   let proc (x,y) = S.circle [SA.cx (toString x), SA.cy (toString y), SA.r "2", SA.fill "blue"] []
@@ -112,8 +141,8 @@ midPoint a b =
   in (xm, ym)
 
 
-showEdges edges =
-  let es = D.values edges
+showEdges cedges =
+  let es = D.values cedges
       showEdge ps pe =
         let (xs,ys) = transform ps
             (xe,ye) = transform pe
@@ -143,17 +172,36 @@ showEdges edges =
   in L.concat <| L.map proc es
 
 
-verifEdges edges =
-  let es = D.values edges
-      proc e acc =
-        case e of
-          Edge _ _ ps pe -> acc && True
-          UnBoundedEdge _ _ ps pe -> acc && True
-          HalfEdge _ _ ps pe -> acc && True
 
-          _ -> log "edge non reconnu" False --Edge _ _ (Just ps) (Just pe) ->
 
-  in  L.foldl proc True es
+showCells cellMap =
+  let cells = D.values cellMap
+      proc (Cell (Site _ pc) points) =
+        let go acc points =
+                case points of
+                  [] -> acc
+                  [_] -> acc
+                  (ps::pe::r) ->
+                    let (xs,ys) = transform ps
+                        (xe,ye) = transform pe
+                        path1 = moveTo (xs, ys) path0
+                        path2 = lineTo (xe, ye) path1
+                        dstr = path2.thePath
+                    in go ((S.path [SA.d dstr, SA.stroke "red", SA.strokeWidth "1", SA.fill "none"] [])::acc) (pe::r)
+        in go [] points
+  in L.concat <| L.map proc cells
+
+--verifEdges edges =
+--  let es = D.values edges
+--      proc e acc =
+--        case e of
+--          Edge _ _ ps pe -> acc && True
+--          UnBoundedEdge _ _ ps pe -> acc && True
+--          HalfEdge _ _ ps pe -> acc && True
+--
+--          _ -> log "edge non reconnu" False --Edge _ _ (Just ps) (Just pe) ->
+--
+--  in  L.foldl proc True es
 
 {-
 
@@ -183,13 +231,23 @@ type Edge =
 --  L.map (\(s, sites) -> Html.ol [] [(Html.text s), (Html.text (toString sites))]) sts
 
 --  <circle cx="100" cy="10" r="2" fill="blue"/>
-mainHtml : Html.Html msg
+--mainHtml : Html.Html msg
 mainHtml =
+  let cellMap42 = D.filter (\i _ -> i==9) cellMap
+      l = log "keys " (D.keys cellMap42)
+  in div []
+          (svg  [ width "1000", height "500", viewBox "0 0 1000 600" ]
+            ( points data ++ showCells cellMap)
+            :: []
+              )
+
+--mainHtml : Html.Html msg
+mainHtml2 =
   let  d = "" --(basis data path0).thePath
        --l = log "verif edges" (verifEdges edges)
   in div []
           (svg  [ width "1000", height "500", viewBox "0 0 1000 600" ]
-            ( points data ++ (L.map first <| showEdges edges) )
+            ( points data ++ (L.map first <| showEdges cedges) )
             :: []
          --  :: (
          -- [ Html.text (toString edges)]
@@ -197,7 +255,6 @@ mainHtml =
          --     ++[Html.text ("fin"), Html.text ("fin"), Html.text ("fin")]
          --    )
               )
-
 
 {-
       (0.41,0.29)

@@ -191,7 +191,7 @@ orderByAngles (xc, yc) pts =
                               a = atan ta
                               a1 = if dx > 0 then a else a + pi
                           in a1
-                    else  let dx1 = dy
+                    else  let dx1 = log "===========" dy
                               dy1 = -dx
                               cta = dx1 / dy1
                               a = atan cta
@@ -202,7 +202,8 @@ orderByAngles (xc, yc) pts =
                             then angle
                             else angle - 2 * pi
                       else  angle + 2 * pi
-        in log "angle" (angle1*180/pi, (x, y))
+            l = log "angle" (angle1*180/pi, (x, y), dx, dy)
+        in (angle1*180/pi, (x, y))
       pts1 = L.map second <| L.sortBy first <| L.map proc pts
   in pts1
 
@@ -279,16 +280,16 @@ clipCell box points0 =
             [] -> []
             [p] -> if isInsideBox box p then [InsidePoint p] else []
             (p1::p2::[]) ->
-              let ipoints = log "intersectBox"  <| intersectBox box p1 p2
+              let ipoints = intersectBox box p1 p2
                   p1p = if isInsideBox box p1 then [InsidePoint p1] else [] --OusidePoint p1
                   p2p = if isInsideBox box p2 then [InsidePoint p2] else [] --OusidePoint p2
               in p1p ++ ipoints ++ p2p
             (p1::p2::r) ->
-              let ipoints = log "intersectBox1" <| intersectBox box p1 p2
+              let ipoints = intersectBox box p1 p2
                   p1p = if isInsideBox box p1 then [InsidePoint p1] else [] --OusidePoint p1
               in (p1p ++ ipoints) ++ go (p2::r)
 
-      ipoints = log "ipoints"  <| go points0
+      ipoints = go points0
       -- close path
       ipoints1 =  case ipoints of
                     [] -> []
@@ -305,15 +306,15 @@ clipCell box points0 =
           [ip] -> if isIn ip then [getPoint ip] else []
           (ip1::ip2::[]) ->
             case (ip1, ip2) of
-              (InsidePoint p1, InsidePoint p2) -> log "inside" [p1, p2]
+              (InsidePoint p1, InsidePoint p2) -> [p1, p2]
               (InsidePoint p1, BoundaryPoint _ _ p2) -> [p1, p2]
               (BoundaryPoint _ _ p1, InsidePoint p2) -> [p1, p2]
               (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> [p1, p2]
-              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) ->  log "final" <| ((p1 :: addBoxCorners box s1 s2) ++ [p2])
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) ->  ((p1 :: addBoxCorners box s1 s2) ++ [p2])
               _ -> [] -- can never happen
           (ip1::ip2::r) ->
             case (ip1, ip2) of
-              (InsidePoint p1, InsidePoint p2) -> log "inside1" <| p1 :: go1 (ip2::r)
+              (InsidePoint p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
               (InsidePoint p1, BoundaryPoint _ _ _) -> p1 :: go1 (ip2::r)
               (BoundaryPoint _ _ p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
               (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> p1 :: go1 (ip2 :: r)
@@ -347,17 +348,17 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
                           else Nothing
                 else Nothing
           BoxSideTop ->
-            let t = log "top t" <| yFormula ytl
+            let t = yFormula ytl
             in  if 0 < t && t < 1
-                then  let (xi, yi) = log "top" <| linearParametric p1 p2 t
+                then  let (xi, yi) = linearParametric p1 p2 t
                       in  if xtl <= xi && xi <= xbr
                           then Just (side, t, (xi, ytl))
                           else Nothing
                 else Nothing
           BoxSideRight ->
-            let t = log "right t" <|xFormula xbr
+            let t = xFormula xbr
             in  if 0 < t && t < 1
-                then  let (xi, yi) = log "right" <| linearParametric p1 p2 t
+                then  let (xi, yi) = linearParametric p1 p2 t
                       in  if ybr <= yi && yi <= ytl
                           then Just (side, t, (xbr, yi))
                           else Nothing
@@ -365,12 +366,12 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
           BoxSideBottom ->
             let t = yFormula ybr
             in  if 0 < t && t < 1
-                then  let (xi, yi) = log "bottom" <| linearParametric p1 p2 t
+                then  let (xi, yi) = linearParametric p1 p2 t
                       in  if xtl <= xi && xi <= xbr
                           then Just (side, t, (xi, ybr))
                           else Nothing
                 else Nothing
-  in log "intersectSide" <| ipoints
+  in ipoints
 
 intersectBox : Box -> Point -> Point -> List IPoint
 intersectBox box p1 p2 =

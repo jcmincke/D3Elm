@@ -56,8 +56,8 @@ type alias CellMap = GenericCellMap Cell
 
 createCells : CEdgeMap -> CellMap
 createCells cedges =
-  let proc (ia, ib) e acc =
-        let (CEdge a b ps pe) = e
+  let proc _ e acc =
+        let (CEdge (Site ia _ as a) (Site ib _ as b) ps pe) = e
             acc1 = case D.get ia acc of
                     Just (UnorderedCell a pts) ->
                       let pts1 = S.insert ps pts
@@ -363,7 +363,7 @@ loop  events0 =
   let go yd sites edges events =
     case events of
       [] -> let l = log "Fini" ()
-                edges1 = findlastVertices (yd - 1) sites edges
+                edges1 = findlastVertices (yd - 10) sites edges
             in edges1
       (event::revents) ->
         let yd = eventY event
