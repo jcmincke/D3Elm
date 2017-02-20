@@ -173,6 +173,12 @@ circumCircle (x1, y1) (x2, y2) (x3, y3) =
               r = sqrt ((x1 - xc) *  (x1 - xc) + (y1 - yc) * (y1 - yc))
           in (xc, yc, r)
 
+orderByAnglesAndClose : (Float, Float) -> List (Float, Float) -> List (Float, Float)
+orderByAnglesAndClose pc points =
+  case orderByAngles pc points of
+    [] -> []
+    [p] -> [p]
+    (h::r) -> (h::r) ++ [h]
 
 orderByAngles : (Float, Float) -> List (Float, Float) -> List (Float, Float)
 orderByAngles (xc, yc) pts =
@@ -196,7 +202,7 @@ orderByAngles (xc, yc) pts =
                             then angle
                             else angle - 2 * pi
                       else  angle + 2 * pi
-        in (angle1, (xc, yc))
+        in log "angle" (angle1*180/pi, (x, y))
       pts1 = L.map second <| L.sortBy first <| L.map proc pts
   in pts1
 
@@ -275,15 +281,17 @@ clipCell box points0 =
             [] -> []
             [p] -> if isInsideBox box p then [InsidePoint p] else [OusidePoint p]
             (p1::p2::[]) ->
-              let ipoints = intersectBox box p1 p2
+              let ipoints = log "intersectBox"  <| intersectBox box p1 p2
                   p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
                   p2p = if isInsideBox box p2 then InsidePoint p2 else OusidePoint p2
               in p1p::(ipoints ++ [p2p])
             (p1::p2::r) ->
-              let ipoints = intersectBox box p1 p2
+              let ipoints = log "intersectBox1" <| intersectBox box p1 p2
                   p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
-              in p1p::ipoints
-      ipoints = go points0
+              in (p1p::ipoints) ++ go (p2::r)
+
+      ipoints = log "ipoints"  <| go points0
+
       -- eliminate outside points and add corners
       go1 ipoints =
         case ipoints of
@@ -291,7 +299,7 @@ clipCell box points0 =
           [ip] -> if isIn ip then [getPoint ip] else []
           (ip1::ip2::[]) ->
             case (ip1, ip2) of
-              (InsidePoint p1, InsidePoint p2) -> [p1, p2]
+              (InsidePoint p1, InsidePoint p2) -> log "inside" [p1, p2]
               (InsidePoint _, OusidePoint _) -> [] -- can never happen
               (InsidePoint _, BoundaryPoint _ _ _) -> [] -- can never happen
               (OusidePoint _, InsidePoint _) ->  [] -- can never happen
@@ -300,11 +308,11 @@ clipCell box points0 =
               (BoundaryPoint _ _ p1, InsidePoint p2) -> [p1, p2]
               (BoundaryPoint _ _ p1, OusidePoint _) -> [p1]
               (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> [p1, p2]
-              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ [p2]
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) ->  [] -- can never happen -- log "final" <| (p1 :: addBoxCorners box s1 s2) ++ [p2]
               _ -> [] -- can never happen
           (ip1::ip2::r) ->
             case (ip1, ip2) of
-              (InsidePoint p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
+              (InsidePoint p1, InsidePoint p2) -> log "inside1" <| p1 :: go1 (ip2::r)
               (InsidePoint _, OusidePoint _) -> [] -- can never happen
               (InsidePoint p1, BoundaryPoint _ _ _) -> p1 :: go1 (ip2::r)
               (OusidePoint _, InsidePoint _) ->  [] -- can never happen
@@ -315,9 +323,10 @@ clipCell box points0 =
               (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> p1 :: p2 :: go1 r
               (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ [p2]
               _ -> [] -- can never happen
-
-
-  in go1 ipoints
+   in case go1 ipoints of
+        [] -> []
+        [p] -> [p]
+        ((h::r) as ipts) -> ipts ++ [h]
 
 isInsideBox (Box xtl ytl xbr ybr) (x, y) =
     (xtl <= x && x <= xbr && ybr <= y && y <= ytl)
@@ -326,7 +335,7 @@ isOutsideBox b p = not (isInsideBox b p)
 
 
 
-linearPrametric (x1, y1) (x2, y2) t =
+linearParametric (x1, y1) (x2, y2) t =
     (x1 + (x2-x1) * t, y1 + (y2-y1) * t)
 
 
@@ -335,42 +344,42 @@ intersectSide (Box xtl ytl xbr ybr) side p1 p2 =
       (x2, y2) = p2
       xFormula x = (x-x1)/(x2-x1)
       yFormula y = (y-y1)/(y2-y1)
-  in case side of
-        BoxSideLeft ->
-          let t = xFormula xtl
-          in  if 0 <= t && t <= 1.001
-              then  let (xi, yi) = linearPrametric p1 p2 t
-                    in  if ybr <= yi && yi <= ytl
-                        then Just (side, t, (xtl, yi))
-                        else Nothing
-              else Nothing
-        BoxSideTop ->
-          let t = yFormula ytl
-          in  if 0 <= t && t <= 1.001
-              then  let (xi, yi) = linearPrametric p1 p2 t
-                    in  if xtl <= xi && xi <= xbr
-                        then Just (side, t, (xi, ytl))
-                        else Nothing
-              else Nothing
-        BoxSideRight ->
-          let t = xFormula xbr
-          in  if 0 <= t && t <= 1.001
-              then  let (xi, yi) = linearPrametric p1 p2 t
-                    in  if ybr <= yi && yi <= ytl
-                        then Just (side, t, (xbr, yi))
-                        else Nothing
-              else Nothing
-        BoxSideBottom ->
-          let t = yFormula ybr
-          in  if 0 <= t && t <= 1.001
-              then  let (xi, yi) = linearPrametric p1 p2 t
-                    in  if xtl <= xi && xi <= xbr
-                        then Just (side, t, (xi, ybr))
-                        else Nothing
-              else Nothing
+      ipoints = case side of
+          BoxSideLeft ->
+            let t = xFormula xtl
+            in  if 0 < t && t < 1
+                then  let (xi, yi) = linearParametric p1 p2 t
+                      in  if ybr <= yi && yi <= ytl
+                          then Just (side, t, (xtl, yi))
+                          else Nothing
+                else Nothing
+          BoxSideTop ->
+            let t = log "top t" <| yFormula ytl
+            in  if 0 < t && t < 1
+                then  let (xi, yi) = log "top" <| linearParametric p1 p2 t
+                      in  if xtl <= xi && xi <= xbr
+                          then Just (side, t, (xi, ytl))
+                          else Nothing
+                else Nothing
+          BoxSideRight ->
+            let t = log "right t" <|xFormula xbr
+            in  if 0 < t && t < 1
+                then  let (xi, yi) = log "right" <| linearParametric p1 p2 t
+                      in  if ybr <= yi && yi <= ytl
+                          then Just (side, t, (xbr, yi))
+                          else Nothing
+                else Nothing
+          BoxSideBottom ->
+            let t = yFormula ybr
+            in  if 0 < t && t < 1
+                then  let (xi, yi) = log "bottom" <| linearParametric p1 p2 t
+                      in  if xtl <= xi && xi <= xbr
+                          then Just (side, t, (xi, ybr))
+                          else Nothing
+                else Nothing
+  in log "intersectSide" <| ipoints
 
-
-
+intersectBox : Box -> Point -> Point -> List IPoint
 intersectBox box p1 p2 =
   let eps = 1e-6
       (x1, y1) = p1
@@ -403,7 +412,7 @@ intersectBox box p1 p2 =
         [(s, _, p)] ->  if isInsideBox box p1
                         then [BoundaryPoint s DirOut p]
                         else [BoundaryPoint s DirIn p]
-        [(s1, _, p1), (s2, _, t2)] -> [BoundaryPoint s1 DirIn p1, BoundaryPoint s2 DirOut p2]
+        [(s1, _, p1), (s2, _, p2)] -> [BoundaryPoint s1 DirIn p1, BoundaryPoint s2 DirOut p2]
         _ -> []  -- should never happen
   in  ipoints2
 

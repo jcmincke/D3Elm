@@ -72,12 +72,9 @@ createCells cedges =
                     Nothing -> D.insert ib (UnorderedCell b (S.fromList [ps, pe])) acc1
         in acc2
       cells1 = D.foldl proc D.empty cedges
-      proc1 k (UnorderedCell (Site _ xc as site) pointSet) =
+      proc1 k (UnorderedCell (Site _ pc as site) pointSet) =
         let points = S.toList pointSet
-            points1 = case orderByAngles xc points of
-                      [] -> []
-                      [p] -> [p]
-                      (h::r) -> (h::r) ++ [h]
+            points1 = orderByAnglesAndClose pc points
         in  Cell site points1
       cells2 = D.map proc1 cells1
   in cells2

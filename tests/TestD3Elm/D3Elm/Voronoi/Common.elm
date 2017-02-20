@@ -24,9 +24,39 @@ all =
         [ test "2nd degree equation" <| test2ndDegreeEquation
           , test "parabola intersection" <| testParabolaIntersection
           , test "CircumCircle" <| testCircumCircle
-          , test "Box Intersection" <| testBoxIntersection
+--          , test "Box Intersection" <| testBoxIntersection
+          , test "Clip Cell" <| testClipCell
         ]
 
+
+testClipCell () =
+  let box = Box -10 10 10 -10
+      points1 = [
+        (11, 0)
+        , (0, 11)
+        , (-11, 0)
+        , (0, -11)
+        , (11, 0)
+        ]
+      points2 = [
+        (10, 0)
+        , (0, 10)
+        , (-10, 0)
+        , (0, -10)
+        , (10, 0)
+        ]
+      points = [
+        (100, 0)
+        , (0, 100)
+        , (-100, 0)
+--        , (0, -10)
+        , (100, 0)
+        ]
+--      points1 = log "cell" <| orderByAnglesAndClose (0, 0) points
+      cells = clipCell box points
+  in Expect.equal cells []
+
+{-}
 testBoxIntersection () =
   let box = Box (-10) 10 10 (-10)
       cases = [
@@ -59,6 +89,14 @@ testOneBox box side p1 p2 =
             r2 = findSide box p
         in (r1  == r2 && abs (tx - ty) < eps && 0 <= tx && tx <= 1 && s == side )
       NoIntersection -> False
+
+-}
+
+type IPoint =
+  InsidePoint Point
+  |OusidePoint Point
+  |BoundaryPoint BoxSide Direction Point
+
 
 
 findSide (Box xtl ytl xbr ybr) p =
