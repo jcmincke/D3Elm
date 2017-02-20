@@ -13,7 +13,7 @@ import Tuple exposing (..)
 import D3Elm.Common exposing (..)
 
 import D3Elm.Voronoi.Common exposing (..)
-import D3Elm.Voronoi.VoronoiSimple as V exposing (..)
+import D3Elm.Voronoi.Voronoi as V exposing (..)
 
 
 eps = 1e-10
@@ -24,7 +24,6 @@ all =
         [ test "2nd degree equation" <| test2ndDegreeEquation
           , test "parabola intersection" <| testParabolaIntersection
           , test "CircumCircle" <| testCircumCircle
---          , test "Box Intersection" <| testBoxIntersection
           , test "Clip Cell" <| testClipCell
         ]
 
@@ -45,58 +44,19 @@ testClipCell () =
         , (0, -10)
         , (10, 0)
         ]
-      points = [
+      points3 = [
         (100, 0)
         , (0, 100)
         , (-100, 0)
---        , (0, -10)
         , (100, 0)
         ]
---      points1 = log "cell" <| orderByAnglesAndClose (0, 0) points
-      cells = clipCell box points2
-  in Expect.equal cells []
-
-{-}
-testBoxIntersection () =
-  let box = Box (-10) 10 10 (-10)
-      cases = [
-        (0, 0, 11, 0.1, BoxSideRight)
-        , (0, 0, 10.01, 0.1, BoxSideRight)
-        , (0, 0, -11, 0.1, BoxSideLeft)
-        , (0, 0, -10.001, 0.1, BoxSideLeft)
-
-        , (0, 0, 0.1, 11, BoxSideTop)
-        , (0, 0, 0.1, 10.001, BoxSideTop)
-        , (0, 0, 0.1, -11, BoxSideBottom)
-        , (0, 0, 0.1, -10.001, BoxSideBottom)
-        ]
-      rs = L.map (\(x1, y1, x2, y2, side) -> testOneBox box side (x1, y1) (x2, y2)) cases
-      r = L.foldl (&&) True rs
-  in Expect.true "Box Intersection" r
-
-testOneBox box side p1 p2 =
-  let eps = 1e-7
-      (x1, y1) = p1
-      (x2, y2) = p2
-      xFormula x = (x-x1)/(x2-x1)
-      yFormula y = (y-y1)/(y2-y1)
-      r1 = intersectBox box p1 p2
-  in case r1 of
-      Intersection s p ->
-        let (x, y) = p
-            tx = xFormula x
-            ty = yFormula y
-            r2 = findSide box p
-        in (r1  == r2 && abs (tx - ty) < eps && 0 <= tx && tx <= 1 && s == side )
-      NoIntersection -> False
-
--}
-
-type IPoint =
-  InsidePoint Point
-  |OusidePoint Point
-  |BoundaryPoint BoxSide Direction Point
-
+      res1 = [(10,1),(1,10),(-1,10),(-10,1),(-10,-1),(-1,-10),(1,-10),(10,-1),(10,1)]
+      res2 = [(10,0),(0,10),(-10,0),(0,-10),(10,0)]
+      res3 = [(-10,0),(10,0),(10,10),(-10,10),(-10,0)]
+      cells1 = clipCell box points1
+      cells2 = clipCell box points2
+      cells3 = clipCell box points3
+  in Expect.true "ClipCell" (cells1 == res1 && cells2 == res2 && cells3 == res3)
 
 
 findSide (Box xtl ytl xbr ybr) p =
@@ -118,20 +78,6 @@ findSide (Box xtl ytl xbr ybr) p =
                              then Intersection BoxSideBottom p
                              else NoIntersection
                         else NoIntersection
-
-
-
---type BoxIntersection =
---  NoIntersection
---  |Intersection BoxSide (Float, Float)
-
-
---type BoxSide =
---  BoxSideLeft
---  |BoxSideTop
---  |BoxSideRight
---  |BoxSideBottom
-
 
 
 
