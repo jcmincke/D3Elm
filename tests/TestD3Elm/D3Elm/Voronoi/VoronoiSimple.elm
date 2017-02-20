@@ -20,10 +20,11 @@ eps = 1e-10
 all : Test
 all =
     describe "Voronoi "
-        [ test "testVoronoi" <| testVoronoi
+        [
+        --test "testVoronoi" <| testVoronoi
         ]
 
-
+{-}
 testVoronoi () =
   let s0 = Site 0 (10, 10)
       xs0 = [(12, 9), (9, 8), (77, 7), (2, 6), (12, 5), (16, 4), (5, 3), (13, 2), (10, 1)]
@@ -47,5 +48,5 @@ testVoronoi () =
    --sites2
 --  in Expect.equal sites1 [] --sites2
 --  in Expect.equal sites1 sites2
-
+-}
 

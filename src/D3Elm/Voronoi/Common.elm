@@ -244,7 +244,7 @@ type BoxIntersection =
 
 type IPoint =
   InsidePoint Point
-  |OusidePoint Point
+--  |OusidePoint Point
   |BoundaryPoint BoxSide Direction Point
 
 addBoxCorners (Box xtl ytl xbr ybr) s1 s2 =
@@ -268,30 +268,36 @@ clipCell box points0 =
   let getPoint p =
         case p of
           InsidePoint p -> p
-          OusidePoint p -> p
           BoundaryPoint _ _ p -> p
       isIn p =
         case p of
           InsidePoint _ -> True
-          OusidePoint _ -> False
           BoundaryPoint _ _ _ -> False
 
       go points =
           case points of
             [] -> []
-            [p] -> if isInsideBox box p then [InsidePoint p] else [OusidePoint p]
+            [p] -> if isInsideBox box p then [InsidePoint p] else []
             (p1::p2::[]) ->
               let ipoints = log "intersectBox"  <| intersectBox box p1 p2
-                  p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
-                  p2p = if isInsideBox box p2 then InsidePoint p2 else OusidePoint p2
-              in p1p::(ipoints ++ [p2p])
+                  p1p = if isInsideBox box p1 then [InsidePoint p1] else [] --OusidePoint p1
+                  p2p = if isInsideBox box p2 then [InsidePoint p2] else [] --OusidePoint p2
+              in p1p ++ ipoints ++ p2p
             (p1::p2::r) ->
               let ipoints = log "intersectBox1" <| intersectBox box p1 p2
-                  p1p = if isInsideBox box p1 then InsidePoint p1 else OusidePoint p1
-              in (p1p::ipoints) ++ go (p2::r)
+                  p1p = if isInsideBox box p1 then [InsidePoint p1] else [] --OusidePoint p1
+              in (p1p ++ ipoints) ++ go (p2::r)
 
       ipoints = log "ipoints"  <| go points0
-
+      -- close path
+      ipoints1 =  case ipoints of
+                    [] -> []
+                    [p] -> [p]
+                    (h::r) -> case L.reverse r of
+                                [] -> [h]
+                                (last::_) ->  if h /= last
+                                              then ipoints ++ [h]
+                                              else ipoints
       -- eliminate outside points and add corners
       go1 ipoints =
         case ipoints of
@@ -300,33 +306,20 @@ clipCell box points0 =
           (ip1::ip2::[]) ->
             case (ip1, ip2) of
               (InsidePoint p1, InsidePoint p2) -> log "inside" [p1, p2]
-              (InsidePoint _, OusidePoint _) -> [] -- can never happen
-              (InsidePoint _, BoundaryPoint _ _ _) -> [] -- can never happen
-              (OusidePoint _, InsidePoint _) ->  [] -- can never happen
-              (OusidePoint _, OusidePoint _) ->  [] -- can happen
-              (OusidePoint _, BoundaryPoint _ _ _) -> [] -- can never happen
+              (InsidePoint p1, BoundaryPoint _ _ p2) -> [p1, p2]
               (BoundaryPoint _ _ p1, InsidePoint p2) -> [p1, p2]
-              (BoundaryPoint _ _ p1, OusidePoint _) -> [p1]
               (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> [p1, p2]
-              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) ->  [] -- can never happen -- log "final" <| (p1 :: addBoxCorners box s1 s2) ++ [p2]
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) ->  log "final" <| ((p1 :: addBoxCorners box s1 s2) ++ [p2])
               _ -> [] -- can never happen
           (ip1::ip2::r) ->
             case (ip1, ip2) of
               (InsidePoint p1, InsidePoint p2) -> log "inside1" <| p1 :: go1 (ip2::r)
-              (InsidePoint _, OusidePoint _) -> [] -- can never happen
               (InsidePoint p1, BoundaryPoint _ _ _) -> p1 :: go1 (ip2::r)
-              (OusidePoint _, InsidePoint _) ->  [] -- can never happen
-              (OusidePoint _, OusidePoint _) -> go1 r
-              (OusidePoint _, BoundaryPoint _ _ _) -> go1 (ip2::r)
               (BoundaryPoint _ _ p1, InsidePoint p2) -> p1 :: go1 (ip2::r)
-              (BoundaryPoint _ _ p1, OusidePoint _) -> p1 :: go1 r
-              (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> p1 :: p2 :: go1 r
-              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ [p2]
+              (BoundaryPoint _ DirIn p1, BoundaryPoint _ DirOut p2) -> p1 :: go1 (ip2 :: r)
+              (BoundaryPoint s1 DirOut p1, BoundaryPoint s2 DirIn p2) -> (p1 :: addBoxCorners box s1 s2) ++ go1 (ip2 :: r)
               _ -> [] -- can never happen
-   in case go1 ipoints of
-        [] -> []
-        [p] -> [p]
-        ((h::r) as ipts) -> ipts ++ [h]
+   in go1 ipoints1
 
 isInsideBox (Box xtl ytl xbr ybr) (x, y) =
     (xtl <= x && x <= xbr && ybr <= y && y <= ytl)

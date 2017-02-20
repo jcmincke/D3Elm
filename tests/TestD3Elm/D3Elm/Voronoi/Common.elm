@@ -53,7 +53,7 @@ testClipCell () =
         , (100, 0)
         ]
 --      points1 = log "cell" <| orderByAnglesAndClose (0, 0) points
-      cells = clipCell box points
+      cells = clipCell box points2
   in Expect.equal cells []
 
 {-}

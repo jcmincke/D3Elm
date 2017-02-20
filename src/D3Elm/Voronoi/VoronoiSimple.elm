@@ -180,12 +180,6 @@ removeArc pc radius a b c sites0 events0 edges0 =
 
       _ ->  (sites0, events0, edges0)
 
---removeArc : (Float, Float) -> Float -> Site -> Site -> Site -> List Site -> List (Event Site) -> EdgeMap -> (List Site, List (Event Site), EdgeMap)
-
---removeArc pc radius a b c sites0 events0 edges0 =
-
---removeArc2 : (Float, Float) -> Float -> List Site -> (List Site, Maybe (Site, Site, Site))
-
 removeArc2 :
     (Float, Float) -> Float -> Site -> Site -> Site -> List Site -> List (Event Site) -> EdgeMap
               -> (List Site, List (Event Site), EdgeMap)
@@ -264,17 +258,6 @@ addCircleEvent yd a b c events =
             then insertEvent eventComparer evt events
             else events
 
---addCircleEvent yd a b c events =
---  let (Site _ pa) = a
---      (Site _ pb) = b
---      (Site _ pc) = c
---  in  if a /= c
---      then  let (xc, yc, radius) = circumCircle pa pb pc
---                evt = CircleEvent a b c (xc, yc) radius
---            in  if (yc - radius) <= yd
---                then insertEvent eventComparer evt events
---                else events
---      else events
 
 findCircleEvents : Float -> List Site -> List (Event Site)
 findCircleEvents yd sites0 =
@@ -323,8 +306,60 @@ processOneEvent sites0 remainingEvents edges0 event  =
 --            (sites1, events1, edges1) = removeArc2 pc radius a b c sites0 remainingEvents edges0
         in (sites1, events1, edges1)
 
-loop : List Site -> List (Event Site) -> EdgeMap
-loop sites0 events0 =
+
+
+-- normalize all points into a 1x1 box
+normalize : List Point -> (List Point, (Float, Float) -> (Float, Float))
+normalize points =
+  let eps = 1e-6
+      go xmin xmax ymin ymax points =
+        case points of
+          [] -> (xmin, xmax, ymin, ymax)
+          ((x, y)::r) ->
+            let xmin1 = if x < xmin then x else xmin
+                xmax1 = if xmax < x then x else xmax
+                ymin1 = if y < ymin then y else ymin
+                ymax1 = if ymax < y then y else ymax
+            in go xmin1 xmax1 ymin1 ymax1 r
+  in case points of
+      [] -> ([], (\p -> p))
+      ((x, y)::r) ->
+        let (xmin, xmax, ymin, ymax) = go x y x y r
+            transformX x =  if abs (xmax - xmin) < eps
+                            then x
+                            else (x - xmin) / (xmax - xmin)
+            invTransformX x = if abs (xmax - xmin) < eps
+                              then x
+                              else xmin + x * (xmax - xmin)
+            transformY y =  if abs (ymax - ymin) < eps
+                            then y
+                            else (y - ymin) / (ymax - ymin)
+            invTransformY y = if abs (ymax - ymin) < eps
+                              then y
+                              else ymin + y * (ymax - ymin)
+            invTranform (x, y) = (invTransformX x, invTransformY y)
+            points1 = L.map (\(x, y) -> (transformX x, transformY y)) points
+        in (points1, invTranform)
+
+voronoi : List Point -> CEdgeMap
+voronoi points =
+  let (npoints, invTransform) = normalize points
+      -- TODO : do sth about the duplicates and points with same Y
+      -- sort by decreasing Y
+      npoints1 = L.reverse <| L.sortBy second npoints
+      sites = makeSites npoints1
+      events = L.map PointEvent sites
+      edges = loop events
+      cedges = transformEdges edges
+      proc _ (CEdge (Site ia pa) (Site ib pb) p1 p2) = CEdge  (Site ia (invTransform pa)) (Site ib (invTransform pb)) (invTransform p1) (invTransform p2)
+      cedges1 = D.map proc cedges
+  in cedges1
+
+
+
+
+loop : List (Event Site) -> EdgeMap
+loop  events0 =
   let go yd sites edges events =
     case events of
       [] -> let l = log "Fini" ()
@@ -334,16 +369,12 @@ loop sites0 events0 =
         let yd = eventY event
             l = log "pre sites ok" <| (checkSiteSMonotony yd sites, yd, siteSummary sites)
             (sites1, revents1, edges1) = processOneEvent sites revents edges event
---            revents2 =
---              if sites1 /= sites
---              then  let revts1 = removeCircleEvents revents
---                        ces = findCircleEvents yd sites1
---                        revts2 = L.foldl (\ce acc -> insertEvent eventComparer ce acc) revts1 ces
---                    in revts2
---              else revents
             l1 = log "after sites ok" <| (checkSiteSMonotony yd sites1, yd-1, siteSummary sites1)
         in go yd sites1 edges1 revents1
-  in go 2 sites0 D.empty events0
+  in case events0 of
+    [] -> D.empty
+    (PointEvent (Site _ (_, yd))::r) -> go yd [] D.empty events0
+    _ -> D.empty
 
 
 
