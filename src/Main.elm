@@ -16,5 +16,6 @@ import D3Elm.Shapes.Curves.Cardinal
 import D3Elm.Shapes.Curves.Monotone
 
 import D3Elm.Geo.Math
+import D3Elm.Geo.Rotation
 
 main = text "hello"

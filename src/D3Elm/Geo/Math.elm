@@ -10,6 +10,20 @@ tau = pi * 2
 degrees = 180 / pi
 radians = pi / 180
 
+--abs = Basics.abs
+--atan = Basics.atan
+--atan2 = Basics.atan2
+--cos = Basics.cos
+ceil = Basics.ceiling
+exp x = Basics.e ^ x
+floor = Basics.floor
+log = Basics.logBase Basics.e
+pow x y = x ^ y
+--sin = Basics.sin
+--sqrt = Basics.sqrt
+--tan = Basics.tan
+
+
 sign : Float -> Float
 sign x =  if x > 0
           then 1
