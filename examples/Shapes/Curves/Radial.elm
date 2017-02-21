@@ -32,7 +32,7 @@ datab = [
 
 data =
   let angles = mkList 0 360
-  in L.map (\a -> let ra = a*pi/180
+  in L.map (\a -> let ra = toFloat a * pi / 180
                   in (50 + 10 * sin (10 * ra)  , ra)) angles
 
 points data =

@@ -15,4 +15,6 @@ import D3Elm.Shapes.Curves.Natural
 import D3Elm.Shapes.Curves.Cardinal
 import D3Elm.Shapes.Curves.Monotone
 
+import D3Elm.Geo.Math
+
 main = text "hello"

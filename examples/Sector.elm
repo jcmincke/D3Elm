@@ -1,6 +1,5 @@
 module Sector exposing (main)
 
---import Html as H exposing (Html, button, div, text)
 import Html
 import Svg as S exposing (..)
 import Svg.Attributes as SA exposing (..)
@@ -8,19 +7,9 @@ import Dict as D exposing (..)
 import List as L exposing (..)
 
 import Logger as Logger exposing (..)
---import Svg as S exposing (..)
 
 import D3Elm.Path.Path exposing (..)
 import D3Elm.Shapes.Sector exposing (..)
-
-loggerConfig : Logger.Config a
-loggerConfig =
-    Logger.defaultConfig  Logger.Debug
-
-log : String -> a -> a
-log =
-    Logger.log loggerConfig Logger.Debug
-
 
 main = sectorHtml
 
