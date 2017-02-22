@@ -12,6 +12,7 @@ import TestD3Elm.D3Elm.Hierarchy.Treemap.Treemap as Treemap
 import TestD3Elm.D3Elm.Shapes.Curves.Curves as Curves
 import TestD3Elm.D3Elm.Voronoi.Voronoi as Voronoi
 import TestD3Elm.D3Elm.Voronoi.Common as VoronoiCommon
+import TestD3Elm.D3Elm.Geo.Rotation as Rotation
 
 allTests : Test
 allTests =
@@ -22,6 +23,7 @@ allTests =
     , Curves.all
     , VoronoiCommon.all
     , Voronoi.all
+    , Rotation.all
     ]
 
 main : TestProgram

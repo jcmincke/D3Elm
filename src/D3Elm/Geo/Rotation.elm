@@ -1,41 +1,46 @@
 module D3Elm.Geo.Rotation exposing (
   rotate,
-  invRotate
+  invRotate,
+  genericNormalize
   )
 
 import Basics as B exposing (..)
+
 import D3Elm.Geo.Math as Math exposing (..)
 
 asin1 = Math.asin
 
--- todo : improve, use rest/modulo!
-normalize angle =
-  if angle > pi
-  then normalize (angle - tau)
-  else  if angle < -pi
-        then normalize (angle + tau)
-        else angle
+genericNormalize bottom angle =
+  let d = floor (angle / tau)
+      angle1 = angle - bottom * tau
+  in if angle < bottom
+     then angle + tau
+     else if angle >= bottom + tau
+          then angle - tau
+          else angle
 
+normalizePi = genericNormalize (-pi)
+normalize0 = genericNormalize 0
 
 -- !! radians
-rotate : Float -> Float -> Float -> (Float -> Float -> (Float, Float))
+rotate : Float -> Float -> Float -> ((Float, Float) -> (Float, Float))
 rotate deltaLambda deltaPhi deltaGamma =
-  let normalize2 (l, p) = (normalize l, normalize p)
+  let normalize2 (l, p) = (normalizePi l, normalize0 p)
       proc =  if (deltaPhi, deltaGamma) /= (0,0)
-              then curry ((forwardRotationLambda deltaLambda >> rotationPhiGamma deltaPhi deltaGamma) >> normalize2)
-              else curry (forwardRotationLambda deltaLambda >> normalize2)
+              then ((forwardRotationLambda deltaLambda >> rotationPhiGamma deltaPhi deltaGamma) >> normalize2)
+              else (forwardRotationLambda deltaLambda >> normalize2)
   in proc
 
 invRotate : Float -> Float -> Float -> ((Float, Float) -> (Float, Float))
 invRotate deltaLambda deltaPhi deltaGamma =
-  let normalize2 (l, p) = (normalize l, normalize p)
+  let normalize2 (l, p) = (normalizePi l, normalize0 p)
   in  if (deltaPhi, deltaGamma) /= (0,0)
-      then (forwardRotationLambda (-deltaLambda) >> invRotationPhiGamma deltaPhi deltaGamma >> normalize2)
+      then (invRotationPhiGamma deltaPhi deltaGamma >> forwardRotationLambda (-deltaLambda) >> normalize2)
       else (forwardRotationLambda (-deltaLambda) >> normalize2)
 
 forwardRotationLambda : Float -> ((Float, Float) -> (Float, Float))
 forwardRotationLambda deltaLambda (lambda, phi) =
-  (normalize (lambda + deltaLambda), phi)
+  (lambda + deltaLambda, phi)
 
 rotationPhiGamma : Float -> Float -> ((Float, Float) -> (Float, Float))
 rotationPhiGamma deltaPhi deltaGamma =
@@ -54,6 +59,10 @@ rotationPhiGamma deltaPhi deltaGamma =
         in (lambda1, phi1)
   in proc
 
+
+
+
+
 invRotationPhiGamma : Float -> Float -> ((Float, Float) -> (Float, Float))
 invRotationPhiGamma deltaPhi deltaGamma =
   let cosDeltaPhi = cos deltaPhi
@@ -70,4 +79,5 @@ invRotationPhiGamma deltaPhi deltaGamma =
             phi1 = asin1 (k * cosDeltaPhi - x * sinDeltaPhi)
         in (lambda1, phi1)
   in proc
+
 
