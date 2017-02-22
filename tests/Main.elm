@@ -13,6 +13,7 @@ import TestD3Elm.D3Elm.Shapes.Curves.Curves as Curves
 import TestD3Elm.D3Elm.Voronoi.Voronoi as Voronoi
 import TestD3Elm.D3Elm.Voronoi.Common as VoronoiCommon
 import TestD3Elm.D3Elm.Geo.Rotation as Rotation
+import TestD3Elm.D3Elm.Geo.Graticule as Graticule
 
 allTests : Test
 allTests =
@@ -24,6 +25,7 @@ allTests =
     , VoronoiCommon.all
     , Voronoi.all
     , Rotation.all
+    , Graticule.all
     ]
 
 main : TestProgram

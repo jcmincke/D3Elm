@@ -18,5 +18,6 @@ import D3Elm.Shapes.Curves.Monotone
 import D3Elm.Geo.Math
 import D3Elm.Geo.Rotation
 import D3Elm.Geo.Interpolate
+import D3Elm.Geo.Graticule
 
 main = text "hello"
