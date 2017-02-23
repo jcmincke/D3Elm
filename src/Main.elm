@@ -20,4 +20,8 @@ import D3Elm.Geo.Rotation
 import D3Elm.Geo.Interpolate
 import D3Elm.Geo.Graticule
 
+import D3Elm.Geo.Transformation
+import D3Elm.Geo.Projection.Projection
+import D3Elm.Geo.Projection.Orthographic
+
 main = text "hello"
