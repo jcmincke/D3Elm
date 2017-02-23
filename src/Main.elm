@@ -23,5 +23,6 @@ import D3Elm.Geo.Graticule
 import D3Elm.Geo.Transformation
 import D3Elm.Geo.Projection.Projection
 import D3Elm.Geo.Projection.Orthographic
+import D3Elm.Geo.Rendering.Simple
 
 main = text "hello"
