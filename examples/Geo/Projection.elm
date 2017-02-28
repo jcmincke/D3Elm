@@ -12,6 +12,8 @@ import GeoJson exposing (..)
 import D3Elm.Path.Path as P exposing (..)
 import D3Elm.Geo.Transformation exposing (..)
 import D3Elm.Geo.Projection.Orthographic exposing (..)
+import D3Elm.Geo.Projection.Gnomonic exposing (..)
+import D3Elm.Geo.Projection.Stereographic exposing (..)
 import D3Elm.Geo.Graticule exposing (..)
 import D3Elm.Geo.Scale as S exposing (..)
 import D3Elm.Geo.Rotation as R exposing (..)
@@ -49,11 +51,11 @@ renderCtx =
 
 
 
---
-
 mainHtml : Html.Html msg
 mainHtml =
-  let tr = (R.rotate 0.5 0.5 0.5) >> orthographic >> (S.scale 100 100) >> (S.translate 100 100)
+  let --tr = (R.rotate 0.5 0.5 0.5) >> orthographic >> (S.scale 100 100) >> (S.translate 100 100)
+      --tr = (R.rotate 0 0.1 0) >> gnomonic >> (S.scale 10 10) >> (S.translate 100 100)
+      tr = (R.rotate 0 0.1 0) >> stereographic >> (S.scale 10 10) >> (S.translate 100 100)
       geoTr = createTransformation tr
       grat1 = geoTr grat
       cmds = render renderCtx grat1 []

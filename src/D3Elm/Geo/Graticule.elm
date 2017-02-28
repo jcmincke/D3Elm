@@ -5,6 +5,7 @@ import List as L exposing (..)
 
 import GeoJson exposing (..)
 
+import D3Elm.Geo.Common exposing (..)
 import D3Elm.Geo.Math as Math exposing (..)
 
 type alias GraticuleConf = {
@@ -13,7 +14,7 @@ type alias GraticuleConf = {
   , nbParallelSteps : Float
   , nbMeridianSteps : Float
   }
-
+{-}
 closingMap : (a -> b) -> List a -> List b
 closingMap f l =
   let go b0 =
@@ -38,12 +39,12 @@ mkList s e last n =
 
 toPosition : (Float, Float) -> Position
 toPosition (a, b) = (a, b, 0)
-
+-}
 graticule : GraticuleConf -> Geometry
 graticule conf =
   let meridians = graticuleMedidians conf
       parallels = graticuleParallels conf
-  in MultiLineString <| L.map (\l -> L.map toPosition l) (meridians ++ parallels)
+  in MultiLineString <| L.map (\l -> L.map toGeoPosition l) (meridians ++ parallels)
 
 graticuleMedidians : GraticuleConf -> List (List (Float, Float))
 graticuleMedidians conf =
