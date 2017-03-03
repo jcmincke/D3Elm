@@ -17,7 +17,7 @@ type alias CircleConf = {
 
 
 circle conf =
-  let phi = pi/2 - radius
+  let phi = pi/2 - conf.radiusAngle
       lambdas  = mkList (-pi) pi [] conf.nbSteps
       rot = R.rotate 0 (pi/2) 0
       parallel = closingMap (\lambda -> rot (lambda, phi)) lambdas

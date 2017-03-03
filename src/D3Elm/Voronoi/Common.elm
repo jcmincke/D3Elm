@@ -136,20 +136,6 @@ parabolaIntersectionLeftOnly yd (xp1, yp1) (xp2, yp2) =
 
 
 
--- solving a 2nd degree equation
--- a x^2 + b x + c = 0
-solve2 : Float -> Float -> Float -> Maybe (Float, Float)
-solve2 a b c =
-  let d2 = b * b - 4 * a * c
-  in if d2 < 0
-     then Nothing
-     else let d = sqrt d2
-              x1 = ((-1) * b - d) / (2 * a)
-              x2 = ((-1) * b + d) / (2 * a)
-          in Just (x1, x2)
-
-
-
 -- x1 x3 x2 x3
 circumCircle : (Float, Float) -> (Float, Float) -> (Float, Float) -> (Float, Float, Float)
 circumCircle (x1, y1) (x2, y2) (x3, y3) =

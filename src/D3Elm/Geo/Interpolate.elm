@@ -30,4 +30,14 @@ interpolate (x0, y0) (x1, y1) =
       then (proc, dist)
       else (\_ -> (x0, y0), dist)
 
+{-
+d = acos(sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon1 - lon2))
+A = sin((1 - f) * d) / sin(d)
+B = sin(f * d) / sin(d)
+x = A * cos(lat1) * cos(lon1) + B * cos(lat2) * cos(lon2)
+y = A * cos(lat1) * sin(lon1) + B * cos(lat2) * sin(lon2)
+z = A * sin(lat1) + B * sin(lat2)
 
+lat_f = atan2(z, sqrt(x^2 + y^2))
+lon_f = atan2(y,x)
+-}

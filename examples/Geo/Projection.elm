@@ -9,16 +9,19 @@ import List as L exposing (..)
 
 import GeoJson exposing (..)
 
-import D3Elm.Path.Path as P exposing (..)
 import D3Elm.Geo.Transformation exposing (..)
+import D3Elm.Geo.Common exposing (..)
 import D3Elm.Geo.Projection.Orthographic exposing (..)
 import D3Elm.Geo.Projection.Gnomonic exposing (..)
 import D3Elm.Geo.Projection.Stereographic exposing (..)
 import D3Elm.Geo.Graticule exposing (..)
+import D3Elm.Geo.Circle as C exposing (..)
 import D3Elm.Geo.Scale as S exposing (..)
 import D3Elm.Geo.Rotation as R exposing (..)
 
 import D3Elm.Geo.Rendering.Simple exposing (..)
+
+import D3Elm.Path.Path as P exposing (..)
 
 main = mainHtml
 
@@ -31,6 +34,16 @@ grat =
     , nbMeridianSteps = 36
     }
   in (Geometry (graticule conf), Nothing)
+
+circle : GeoJson
+circle =
+  let conf = {
+    radiusAngle = pi/8
+    , nbSteps = 36
+    }
+  in (Geometry (LineString (L.map toGeoPosition (C.circle conf))), Nothing)
+
+
 
 renderCtx =
   let rp (x, y) acc =
@@ -53,12 +66,14 @@ renderCtx =
 
 mainHtml : Html.Html msg
 mainHtml =
-  let --tr = (R.rotate 0.5 0.5 0.5) >> orthographic >> (S.scale 100 100) >> (S.translate 100 100)
+  let tr = orthographic >> (S.scale 100 100) >> (S.translate 100 100)
+      --tr = (R.rotate 0.5 0.5 0.5) >> orthographic >> (S.scale 100 100) >> (S.translate 100 100)
       --tr = (R.rotate 0 0.1 0) >> gnomonic >> (S.scale 10 10) >> (S.translate 100 100)
-      tr = (R.rotate 0 0.1 0) >> stereographic >> (S.scale 10 10) >> (S.translate 100 100)
+      --tr = (R.rotate 0 0.1 0) >> stereographic >> (S.scale 10 10) >> (S.translate 100 100)
       geoTr = createTransformation tr
-      grat1 = geoTr grat
-      cmds = render renderCtx grat1 []
+--      grat1 = geoTr grat
+      obj = geoTr circle
+      cmds = render renderCtx obj []
 
   in svg  [ width "1000", height "600", viewBox "0 0 1000 600" ]
           [ g [SA.transform "translate(200, 200)"]

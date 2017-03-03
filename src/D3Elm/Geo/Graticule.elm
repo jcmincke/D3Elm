@@ -14,32 +14,8 @@ type alias GraticuleConf = {
   , nbParallelSteps : Float
   , nbMeridianSteps : Float
   }
-{-}
-closingMap : (a -> b) -> List a -> List b
-closingMap f l =
-  let go b0 =
-        let go1 l =
-          case l of
-            [] -> [b0]
-            (h::r) -> f h :: go1 r
-          in go1
-  in case l of
-    [] -> []
-    [a] -> [f a]
-    (h::r) -> let b0 = f h in b0 :: go b0 r
 
 
-mkList s e last n =
-  let d = (e - s) / n
-      go x0 n =
-        if n == 0
-        then last
-        else x0 :: go (x0 + d) (n-1)
-  in go s n
-
-toPosition : (Float, Float) -> Position
-toPosition (a, b) = (a, b, 0)
--}
 graticule : GraticuleConf -> Geometry
 graticule conf =
   let meridians = graticuleMedidians conf

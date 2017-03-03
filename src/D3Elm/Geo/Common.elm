@@ -20,6 +20,7 @@ closingMap f l =
     [a] -> [f a]
     (h::r) -> let b0 = f h in b0 :: go b0 r
 
+-- todo move to D3.Common
 
 mkList s e last n =
   let d = (e - s) / n
