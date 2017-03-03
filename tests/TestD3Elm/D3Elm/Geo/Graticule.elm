@@ -21,7 +21,7 @@ import D3Elm.Geo.Graticule exposing (..)
 all : Test
 all =
     describe "Graticule "
-        [ test "graticule" <| testGraticule
+        [ --test "graticule" <| testGraticule
         ]
 
 

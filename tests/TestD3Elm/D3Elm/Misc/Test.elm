@@ -27,7 +27,7 @@ import D3Elm.Geo.Rotation as R exposing (..)
 all : Test
 all =
     describe "Misc"
-        [ test "test" <| atest
+        [ --test "test" <| atest
         ]
 
 

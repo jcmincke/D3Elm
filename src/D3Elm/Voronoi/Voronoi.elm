@@ -8,8 +8,6 @@ import Set as S exposing (..)
 import Maybe exposing (withDefault)
 import Tuple exposing (..)
 
-import D3Elm.Common exposing (..)
-import D3Elm.Common exposing (..)
 import D3Elm.Voronoi.Common exposing (..)
 
 

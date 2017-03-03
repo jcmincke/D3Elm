@@ -71,8 +71,8 @@ circleArcIntersection ((lambda1, phi1) as a) ((lambda2, phi2) as b) radiusAngle 
 -- It is up to the caller to correctly order a and b.
 oneIntersection ((lambda1, phi1) as a) ((lambda2, phi2) as b) radiusAngle =
   let -- compute cartesian coordinates
-      ((xa, ya, za) as pa) = cartesian a
-      ((xb, yb, zb) as pb) = cartesian b
+      ((xa, ya, za) as pa) = D.log "ca " <| cartesian a
+      ((xb, yb, zb) as pb) = D.log "cb " <| cartesian b
       -- normal of the plane defined by the arc
       -- the plan is defined by the equation: nx x + ny y + nz * z = 0
       (nx, ny, nz) = crossProduct3D pa pb
@@ -81,7 +81,7 @@ oneIntersection ((lambda1, phi1) as a) ((lambda2, phi2) as b) radiusAngle =
       xc = cos radiusAngle
 
       -- intersection of the circle plane and the arc plane.
-      icm = lineCircleIntersection ny nz (-1 * nx * xc) radiusAngle
+      icm = lineCircleIntersection ny nz (-1 * nx * xc) (sin radiusAngle)
   in  case icm of
       Just ((yc1, zc1), (yc2, zc2)) ->
         let i1 = spherical (xc, yc1, zc1)
@@ -105,17 +105,17 @@ twoIntersections ((lambda1, phi1) as a) ((lambda2, phi2) as b) radiusAngle =
       xc = cos radiusAngle
 
       -- intersection of the circle plane and the arc plane.
-      icm = lineCircleIntersection ny nz (-1 * nx * xc) radiusAngle
+      icm = lineCircleIntersection ny nz (-1 * nx * xc) (sin radiusAngle)
   in  case icm of
       Just (((yc1, zc1) as ic1), ((yc2, zc2) as ic2)) ->
         if ic1 /= ic2
         then
           let i1 = spherical (xc, yc1, zc1)
               i2 = spherical (xc, yc2, zc2)
-              (oi1, oi2) = orderIntersectionsOnArc a b i1 i2
-          in [(oi1, OnCircle), (oi2, OnCircle)]
+              (oi1, oi2) = orderIntersectionsOnArc a i1 i2
+          in D.log "twoIntersections" <| [(oi1, OnCircle), (oi2, OnCircle)]
         else  -- the arc is tangent, discard the intersection point
-              [(a, OusideCircle), (b, OusideCircle)]
+              []
       Nothing -> []
 
 
@@ -129,12 +129,13 @@ findIntersectionOnArc ((lambda1, phi1) as a) ((lambda2, phi2) as b) ((lambdaI1, 
       then i1
       else i2
 
-orderIntersectionsOnArc ((lambda1, phi1) as a) ((lambda2, phi2) as b) ((lambdaI1, phiI1) as i1) ((lambdaI2, phiI2) as i2) =
-  let aToi1 = orthodromicLength a i1
-      aToi2 = orthodromicLength a i2
-  in  if aToi1 < aToi2
-      then (i1, i2)
-      else (i2, i1)
+orderIntersectionsOnArc ((lambda1, phi1) as a) ((lambdaI1, phiI1) as i1) ((lambdaI2, phiI2) as i2) =
+  let aToi1 = D.log "aToi1"<|  orthodromicLength a i1
+      aToi2 = D.log "aToi2"<| orthodromicLength a i2
+  in  D.log "orderIntersectionsOnArc" <|
+        if aToi1 < aToi2
+        then (i1, i2)
+        else (i2, i1)
 
 
 -- intersection of a circle centered on (0,0) with radius r
@@ -145,9 +146,10 @@ lineCircleIntersection a b c r =
       b1 = -2 * a * c
       c1 = c*c - r*r*b*b
       zf y = (c - a * y)/b
+      l = D.log "(a,b,c) = " (a,b,c)
   in  case solve2 a1 b1 c1 of
       Nothing -> Nothing
-      Just (y1, y2) -> Just ((y1, zf y1), (y2, zf y2))
+      Just (y1, y2) -> D.log "cartesian intersection" <| Just ((y1, zf y1), (y2, zf y2))
 
 
 

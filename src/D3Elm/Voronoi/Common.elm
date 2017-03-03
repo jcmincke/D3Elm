@@ -7,6 +7,8 @@ import Maybe exposing (withDefault)
 import Tuple exposing (..)
 import Basics exposing (..)
 
+import D3Elm.Common exposing (..)
+
 
 type alias Point = (Float, Float)
 
