@@ -21,8 +21,10 @@ import D3Elm.Geo.Interpolate
 import D3Elm.Geo.Graticule
 
 import D3Elm.Geo.Transformation
-import D3Elm.Geo.Projection.Projection
+import D3Elm.Geo.Projection.Stereographic
+import D3Elm.Geo.Projection.Gnomonic
 import D3Elm.Geo.Projection.Orthographic
 import D3Elm.Geo.Rendering.Simple
+import D3Elm.Geo.Clip.Circle
 
 main = text "hello"

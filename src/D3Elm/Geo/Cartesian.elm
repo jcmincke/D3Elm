@@ -5,8 +5,11 @@ import D3Elm.Geo.Math as Math exposing (..)
 asin1 = Math.asin
 
 
-spherical : (Float, Float) -> (Float, Float)
-spherical (x,y) = (atan2 x y, asin1 y)
+spherical : (Float, Float, Float) -> (Float, Float)
+spherical (x, y, z) = (atan2 y x, asin1 z)
+
+
+
 
 cartesian : (Float, Float) -> (Float, Float, Float)
 cartesian (lambda, phi) =
