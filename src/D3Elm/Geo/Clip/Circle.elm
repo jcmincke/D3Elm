@@ -15,8 +15,125 @@ type PtLoc =
   |OnCircle
 
 
-circlePolygonIntersection : List (Float, Float) -> Float -> List (Float, Float)
-circlePolygonIntersection polygon radiusAngle =
+circlePointClipping : Float -> (Float, Float) -> Bool
+circlePointClipping radiusAngle a =
+  let xc = cos radiusAngle
+      ((xa, ya, za) as pa) = cartesian a
+  in  xa >= xc
+
+
+
+cleanupToLines : List ((Float, Float), PtLoc) -> List (List (Float, Float))
+cleanupToLines pts =
+  let clean acc pts =
+        case pts of
+            ((a, OusideCircle)::(b, OnCircle)::(c, OnCircle)::((d, OusideCircle)::_ as r))  -> clean ((b,c)::acc) r
+
+            ((a, InsideCircle)::((b, InsideCircle)::(c, InsideCircle)::_ as r)) -> clean ((b,c)::acc) r
+
+            ((a, InsideCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean ((b,c)::acc) r
+--            ((a, InsideCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
+--                      D.log "Should never happen" <| clean acc r -- should never happend
+
+--            ((a, InsideCircle)::((b, OnCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+--            ((a, InsideCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+            ((a, InsideCircle)::((b, OnCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+
+--            ((a, InsideCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+--            ((a, InsideCircle)::((b, OusideCircle)::(c, OnCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+--            ((a, InsideCircle)::((b, OusideCircle)::(c, OusideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+
+            ((a, OnCircle)::((b, InsideCircle)::(c, InsideCircle)::_ as r))  -> clean ((b,c)::acc) r
+            ((a, OnCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean ((b,c)::acc) r
+--            ((a, OnCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r-- should never happend
+
+--            ((a, OnCircle)::((b, OnCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r  -- should never happend
+--            ((a, OnCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r  -- should never happend
+--            ((a, OnCircle)::((b, OnCircle)::(c, OusideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+
+
+--            ((a, OnCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+            ((a, OnCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
+            ((a, OnCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+
+
+--            ((a, OusideCircle)::((b, InsideCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+--            ((a, OusideCircle)::((b, InsideCircle)::(c, OnCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+
+--            ((a, OusideCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+            ((a, OusideCircle)::((b, OnCircle)::(c, InsideCircle)::_ as r))  -> clean ((b,c)::acc) r
+--            ((a, OusideCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+
+--            ((a, OusideCircle)::((b, OnCircle)::(c, OusideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+--            ((a, OusideCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
+--                D.log "Should never happen" <| clean acc r -- should never happend
+            ((a, OusideCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
+            ((a, OusideCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+
+            ((a, _)::((b, _)::(c, _)::_ as r))  ->
+                D.log "Should never happen" <| clean acc r -- should never happend
+
+            _ -> L.reverse acc
+
+      merge : List ((Float, Float), (Float, Float)) -> List (List (Float, Float))
+      merge segments =
+        let go acc cline segs =
+          case segs of
+            [] -> L.reverse acc
+            [(a,b)] -> L.reverse (L.reverse (b::cline)::acc)
+            ((a,b)::(c,d)::r) ->
+              if b == c
+              then go acc (b::cline) ((c,d)::r)
+              else go ((L.reverse (b::cline))::acc) [c] ((c,d)::r)
+        in case segments of
+            [] -> []
+            [(a,b)] -> [[a,b]]
+            ((a,b)::r) -> go [] [a] segments
+      s = clean [] pts
+      lines = merge s
+  in lines
+
+
+circleLineClipping : Float -> List (Float, Float) -> List (List (Float, Float))
+circleLineClipping radiusAngle line =
+  let go pts =
+    case pts of
+      [] -> []
+      [_] -> []
+      (a::b::r) ->
+        case circleArcIntersection a b radiusAngle of
+          (_::t) -> t ++ go (b::r)
+          [] -> [] -- should never happen
+
+  in  case line of
+      [] -> [[]]
+      [l] -> [[l]]
+      (a::_) ->
+        let xc = cos radiusAngle
+            ((xa, ya, za) as pa) = cartesian a
+            pos = if xa >= xc then InsideCircle else OusideCircle
+        in cleanupToLines ((a,pos) :: go line)
+           --((a,pos) :: go line)
+
+
+
+circlePolygonClipping : Float -> List (Float, Float) -> List (Float, Float)
+circlePolygonClipping radiusAngle polygon  =
   let go pts =
     case pts of
       [] -> []

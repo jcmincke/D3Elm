@@ -26,5 +26,6 @@ import D3Elm.Geo.Projection.Gnomonic
 import D3Elm.Geo.Projection.Orthographic
 import D3Elm.Geo.Rendering.Simple
 import D3Elm.Geo.Clip.Circle
+import D3Elm.Geo.Clip.Clip
 
 main = text "hello"

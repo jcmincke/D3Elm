@@ -24,9 +24,9 @@ graticule conf =
 
 graticuleMedidians : GraticuleConf -> List (List (Float, Float))
 graticuleMedidians conf =
-  let lambdas = mkList 0 pi [] conf.nbMeridians
-      phis = D.log "phis" <| mkList 0 tau [] conf.nbMeridianSteps
-      meridians = L.map (\lambda -> closingMap (\phi -> (lambda, phi)) phis) lambdas
+  let lambdas = mkList (-pi) (pi) [] conf.nbMeridians
+      phis = D.log "phis" <| mkList (-pi/2) (pi/2) [pi/2] conf.nbMeridianSteps
+      meridians = L.map (\lambda -> L.map (\phi -> (lambda, phi)) phis) lambdas
   in meridians
 
 

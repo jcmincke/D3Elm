@@ -7,16 +7,16 @@ import D3Elm.Geo.Math as Math exposing (..)
 import GeoJson exposing (..)
 
 
-type alias Transformation = GeoJson -> GeoJson
+type alias Transformation = GeoJsonObject -> GeoJsonObject
 
 createTransformation : ((Float, Float) -> (Float, Float)) -> Transformation
-createTransformation f (geo, mb) =
+createTransformation f geo =
   let geo1 =
     case geo of
       Geometry geometry -> Geometry (goGeometry f geometry)
       Feature o -> Feature (goFeatureObject f o)
       FeatureCollection l -> FeatureCollection (L.map (goFeatureObject f) l)
-  in (geo1, mb)
+  in geo1
 
 
 

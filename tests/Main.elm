@@ -15,6 +15,7 @@ import TestD3Elm.D3Elm.Voronoi.Common as VoronoiCommon
 import TestD3Elm.D3Elm.Geo.Rotation as Rotation
 import TestD3Elm.D3Elm.Geo.Graticule as Graticule
 import TestD3Elm.D3Elm.Geo.Clip.Circle as Circle
+import TestD3Elm.D3Elm.Geo.Clip.Circle1 as Circle1
 
 import TestD3Elm.D3Elm.Misc.Test as Misc
 
@@ -31,6 +32,7 @@ allTests =
     , Graticule.all
     , Misc.all
     , Circle.all
+    , Circle1.all
     ]
 
 main : TestProgram

@@ -44,3 +44,26 @@ solve2 a b c =
               x2 = ((-1) * b + d) / (2 * a)
           in Just (x1, x2)
 
+
+catMaybes : List (Maybe a) -> List a
+catMaybes l =
+  let go e =
+    case e of
+      [] -> []
+      (Just v::r) -> v::go r
+      (Nothing::r) -> go r
+  in go l
+
+
+mapMaybe : (a -> Maybe b) -> List a -> List b
+mapMaybe f l =
+  let go e =
+    case e of
+      [] -> []
+      (a::r) -> case f a of
+                Just v -> v::go r
+                Nothing -> go r
+  in go l
+
+
+

@@ -17,8 +17,8 @@ type alias SimpleRenderContext a = {
   }
 
 
-render : SimpleRenderContext a -> GeoJson -> a -> a
-render ctx (geo, _) a =
+render : SimpleRenderContext a -> GeoJsonObject -> a -> a
+render ctx geo a =
     case geo of
       Geometry geometry -> goGeometry ctx geometry a
       Feature o -> goFeatureObject ctx o a
