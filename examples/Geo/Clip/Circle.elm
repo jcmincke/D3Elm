@@ -28,10 +28,10 @@ main = mainHtml
 grat : GeoJsonObject
 grat =
   let conf = {
-    nbParallels = 1
-    , nbMeridians = 3
-    , nbParallelSteps = 18
-    , nbMeridianSteps = 18
+    nbParallels = 7
+    , nbMeridians = 24
+    , nbParallelSteps = 72
+    , nbMeridianSteps = 72
     }
   in Geometry (graticule conf)
 
@@ -58,7 +58,7 @@ renderCtx =
 mainHtml : Html.Html msg
 mainHtml =
   let tr = orthographic >> (S.scale 100 100) >> (S.translate 100 100)
-      trr = (R.rotate (pi+0.3) 0 0) >> (R.rotate 0 0.3 0)
+      trr = (R.rotate 0.3 0.9 0.3)
       --tr = (R.rotate 0 0.1 0) >> gnomonic >> (S.scale 10 10) >> (S.translate 100 100)
       --tr = (R.rotate 0 0.1 0) >> stereographic >> (S.scale 10 10) >> (S.translate 100 100)
       geoTr = createTransformation tr
@@ -68,8 +68,8 @@ mainHtml =
       mObj1 = clippingTr grat1
   in  case mObj1 of
       Just obj1 ->
-        let obj = geoTr grat1 -- obj1
-            --obj = geoTr obj1
+        let --obj = geoTr grat1 -- obj1
+            obj = geoTr obj1
             cmds = render renderCtx obj []
         in svg  [ width "1000", height "600", viewBox "0 0 1000 600" ]
                 [ g [SA.transform "translate(200, 200)"]

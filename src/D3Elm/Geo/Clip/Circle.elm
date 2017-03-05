@@ -117,8 +117,8 @@ circleLineClipping radiusAngle line =
       [_] -> []
       (a::b::r) ->
         case circleArcIntersection a b radiusAngle of
-          (_::t) -> t ++ go (b::r)
           [] -> [] -- should never happen
+          l -> l ++ go (b::r)
 
   in  case line of
       [] -> [[]]
