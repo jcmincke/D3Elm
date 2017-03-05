@@ -5,6 +5,8 @@ import List as L exposing (..)
 
 import GeoJson exposing (..)
 
+import D3Elm.Geo.Rotation exposing (..)
+import D3Elm.Geo.Merge exposing (..)
 import D3Elm.Geo.Common exposing (..)
 import D3Elm.Geo.Math as Math exposing (..)
 
@@ -40,11 +42,30 @@ graticuleParallels conf =
 
 
 
+type alias PolyGraticuleConf = {
+  deltaLambda : Float
+  , deltaPhi : Float
+  , lambdaSteps : List Float
+  }
 
 
+onePolygon deltaLambda deltaPhi =
+  let p1 = (0, -deltaPhi)
+      p2 = (deltaLambda, -deltaPhi)
+      p3 = (deltaLambda, deltaPhi)
+      p4 = (0, deltaPhi)
+  in [p1, p2, p3, p4, p1]
 
 
-
+polygonialGraticule : PolyGraticuleConf -> Geometry
+polygonialGraticule conf =
+  let polygon = onePolygon conf.deltaLambda conf.deltaPhi
+      proc lambda acc =
+        let rotatedPolygon = L.map (rotate lambda 0 0) polygon
+        in rotatedPolygon :: acc
+      polygons = L.foldl proc [] conf.lambdaSteps
+      geo = MultiPolygon (L.map (\polygon -> [L.map toGeoPosition polygon]) polygons)
+  in geo
 
 
 
