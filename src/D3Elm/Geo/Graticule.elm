@@ -9,6 +9,7 @@ import D3Elm.Geo.Rotation exposing (..)
 import D3Elm.Geo.Merge exposing (..)
 import D3Elm.Geo.Common exposing (..)
 import D3Elm.Geo.Math as Math exposing (..)
+import D3Elm.Geo.Scale exposing (..)
 
 type alias GraticuleConf = {
   nbParallels : Float
@@ -45,25 +46,32 @@ graticuleParallels conf =
 type alias PolyGraticuleConf = {
   deltaLambda : Float
   , deltaPhi : Float
-  , lambdaSteps : List Float
+  , lambdaRepeats : List Float
+  , phiRepeats : List Float
+  , nbParallelSteps : Float
+  , nbMeridianSteps : Float
   }
 
 
-onePolygon deltaLambda deltaPhi =
-  let p1 = (0, -deltaPhi)
-      p2 = (deltaLambda, -deltaPhi)
-      p3 = (deltaLambda, deltaPhi)
-      p4 = (0, deltaPhi)
-  in [p1, p2, p3, p4, p1]
+onePolygon conf =
+  let lambdas = mkList 0 conf.deltaLambda [conf.deltaLambda] conf.nbParallelSteps
+      phis = mkList -conf.deltaPhi conf.deltaPhi [conf.deltaPhi] (2 * conf.nbParallelSteps)
+      p1s = L.map (\l -> (l, -conf.deltaPhi)) lambdas
+      p2s = L.map (\p -> (conf.deltaLambda, p)) phis
+      p3s = L.reverse <| L.map (\l -> (l, conf.deltaPhi)) lambdas
+      p4s = L.reverse <| L.map (\p -> (0, p)) phis
+
+  in p1s ++ p2s ++ p3s ++ p4s
 
 
 polygonialGraticule : PolyGraticuleConf -> Geometry
 polygonialGraticule conf =
-  let polygon = onePolygon conf.deltaLambda conf.deltaPhi
-      proc lambda acc =
-        let rotatedPolygon = L.map (rotate lambda 0 0) polygon
+  let polygon = onePolygon conf
+      proc (lambda, phi) acc =
+        let rotatedPolygon = L.map (rotate lambda 0 0) shiftedPolygon
+            shiftedPolygon = L.map (translate 0 phi) polygon
         in rotatedPolygon :: acc
-      polygons = L.foldl proc [] conf.lambdaSteps
+      polygons = L.foldl proc [] (L.concatMap (\l -> L.map (\p -> (l,p)) conf.phiRepeats) conf.lambdaRepeats)
       geo = MultiPolygon (L.map (\polygon -> [L.map toGeoPosition polygon]) polygons)
   in geo
 
