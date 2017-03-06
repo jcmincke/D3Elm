@@ -33,60 +33,60 @@ cleanupToLines pts =
 
             ((a, InsideCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean ((b,c)::acc) r
 --            ((a, InsideCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
---                      D.log "Should never happen" <| clean acc r -- should never happend
+--                      D.log "Should never happen" <| clean acc r -- should never happen
 
 --            ((a, InsideCircle)::((b, OnCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 --            ((a, InsideCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
             ((a, InsideCircle)::((b, OnCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
 
 --            ((a, InsideCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 --            ((a, InsideCircle)::((b, OusideCircle)::(c, OnCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 --            ((a, InsideCircle)::((b, OusideCircle)::(c, OusideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 
             ((a, OnCircle)::((b, InsideCircle)::(c, InsideCircle)::_ as r))  -> clean ((b,c)::acc) r
             ((a, OnCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean ((b,c)::acc) r
 --            ((a, OnCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r-- should never happend
+--                D.log "Should never happen" <| clean acc r-- should never happen
 
 --            ((a, OnCircle)::((b, OnCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r  -- should never happend
+--                D.log "Should never happen" <| clean acc r  -- should never happen
 --            ((a, OnCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r  -- should never happend
+--                D.log "Should never happen" <| clean acc r  -- should never happen
 --            ((a, OnCircle)::((b, OnCircle)::(c, OusideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 
 
 --            ((a, OnCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
             ((a, OnCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
             ((a, OnCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
 
 
 --            ((a, OusideCircle)::((b, InsideCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 --            ((a, OusideCircle)::((b, InsideCircle)::(c, OnCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 
 --            ((a, OusideCircle)::((b, InsideCircle)::(c, OusideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
             ((a, OusideCircle)::((b, OnCircle)::(c, InsideCircle)::_ as r))  -> clean ((b,c)::acc) r
 --            ((a, OusideCircle)::((b, OnCircle)::(c, OnCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 
 --            ((a, OusideCircle)::((b, OnCircle)::(c, OusideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
 --            ((a, OusideCircle)::((b, OusideCircle)::(c, InsideCircle)::_) as r)  ->
---                D.log "Should never happen" <| clean acc r -- should never happend
+--                D.log "Should never happen" <| clean acc r -- should never happen
             ((a, OusideCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
             ((a, OusideCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
 
             ((a, _)::((b, _)::(c, _)::_ as r))  ->
-                D.log "Should never happen" <| clean acc r -- should never happend
+                D.log "Should never happen" <| clean acc r -- should never happen
 
             _ -> L.reverse acc
 
@@ -132,8 +132,8 @@ circleLineClipping radiusAngle line =
 
 
 
-circlePolygonClipping : Float -> List (Float, Float) -> List (Float, Float)
-circlePolygonClipping radiusAngle polygon  =
+circlePolygonClipping : Float -> Float -> Float -> List (Float, Float) -> List (Float, Float)
+circlePolygonClipping nbSteps minAngle radiusAngle polygon  =
   let go pts =
     case pts of
       [] -> []
@@ -151,17 +151,62 @@ circlePolygonClipping radiusAngle polygon  =
         let xc = cos radiusAngle
             ((xa, ya, za) as pa) = cartesian a
             pos = if xa >= xc then InsideCircle else OusideCircle
-        in cleanup ((a,pos) :: go polygon)
+        in cleanupPolygon nbSteps minAngle ((a,pos) :: go polygon)
 
-cleanup : List ((Float, Float), PtLoc) -> List (Float, Float)
-cleanup pts =
+
+
+cleanupPolygon : Float -> Float -> List ((Float, Float), PtLoc) -> List (Float, Float)
+cleanupPolygon nbSteps minAngle pts =
+  let clipArc p1 p2 = L.reverse (createClipArc nbSteps minAngle p1 p2)
+      clean acc pts =
+        case pts of
+            ((a, OusideCircle)::(b, OnCircle)::(c, OnCircle)::((d, OusideCircle)::_ as r))  ->
+                clean (clipArc b c ++ acc) r
+
+            ((a, InsideCircle)::((b, InsideCircle)::(c, InsideCircle)::_ as r)) -> clean (c::b::acc) r
+
+            ((a, InsideCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean (c::b::acc) r
+            ((a, InsideCircle)::((b, OnCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+            ((a, OnCircle)::((b, InsideCircle)::(c, InsideCircle)::_ as r))  -> clean (c::b::acc) r
+            ((a, OnCircle)::((b, InsideCircle)::(c, OnCircle)::_ as r))  -> clean (c::b::acc) r
+            ((a, OnCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
+            ((a, OnCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+            ((a, OusideCircle)::((b, OnCircle)::(c, InsideCircle)::_ as r))  -> clean (c::b::acc) r
+            ((a, OusideCircle)::((b, OusideCircle)::(c, OnCircle)::_ as r))  -> clean acc r
+            ((a, OusideCircle)::((b, OusideCircle)::(c, OusideCircle)::_ as r))  -> clean acc r
+
+            ((a, _)::((b, _)::(c, _)::_ as r))  ->
+                D.log "Should never happen" <| clean acc r -- should never happen
+
+            _ -> L.reverse acc
+
+      merge : List (Float, Float) -> List (Float, Float)
+      merge pts =
+        let go previous acc segs =
+          case segs of
+            [] -> L.reverse acc
+            (a::r) ->
+              if a == previous
+              then go previous acc r
+              else go a (a::acc) r
+        in case pts of
+            [] -> []
+            [a] -> [a]
+            (a::r) -> go a [] r
+      s = clean [] pts
+      lines = merge s
+  in lines
+
+{-}
+cleanupPolygon : List ((Float, Float), PtLoc) -> List (Float, Float)
+cleanupPolygon pts =
   let go pts =
     case pts of
       [] -> []
       ((a, OusideCircle)::r) -> go r
       ((a, _)::r) -> a::go r
   in go pts
-
+-}
 
 
 circleArcIntersection : (Float, Float) -> (Float, Float) -> Float -> List ((Float, Float), PtLoc)
@@ -281,7 +326,48 @@ lineCircleIntersection a b c r =
         Nothing -> Nothing
         Just (z1, z2) -> Just ((yf z1, z1), (yf z2, z2))
 
+
+-- On the clip circle, create an arc from p1 to p2 (both assumed to be on the clip circle).
+createClipArc :  Float -> Float -> (Float, Float) -> (Float, Float) -> List (Float, Float)
+createClipArc nbSteps minAngle p1 p2 =
+  let (x1, y1, z1) = cartesian p1
+      (x2, y2, z2) = cartesian p2
+      a1 = atan2 z1 y1
+      a2 = atan2 z2 y2
+  in  if a1 < a2
+      then
+        let delta0 = abs (a2 - a1) / nbSteps
+            delta = if delta0 < minAngle then minAngle else delta0
+            go currentAngle =
+              if a2 <= currentAngle
+              then []
+              else currentAngle :: go (currentAngle+delta)
+            angles = go (a1+delta)
+            pts = (p1 :: L.map (\a -> spherical (x1, cos a, sin a)) angles) ++ [p2]
+        in pts
+      else L.reverse <| createClipArc nbSteps minAngle p2 p1
+
+
 {-}
+
+createClipArc : (Float, Float, Float) -> (Float, Float, Float) -> Float -> Float -> List (Float, Float, Float)
+createClipArc ((x1, y1, z1) as p1) ((_, y2, z2) as p2) nbSteps minAngle =
+  let a1 = atan2 z1 y1
+      a2 = atan2 z2 y2
+  if a1 < a2
+  then
+    let delta0 = abs (a2 - a1) / nbSteps
+        delta = if delta0 < minAngle then minAngle else delta0
+        go currentAngle =
+          if a2 <= currentAngle
+          then []
+          else currentAngle :: go (currentAngle+delta)
+        angles = go (currentAngle+delta)
+        pts = (p1 :: L.map (\a -> (x1, cos a, sin a)) angles) ++ [p2]
+    in pts
+  else L.reverse <| createClipArc p2 p1 nbSteps minAngle
+
+
 a y + b z = c
 y^2 + z^2 = r
 
