@@ -9,11 +9,11 @@ import Dict as D exposing (..)
 import List as L exposing (..)
 import Tuple exposing (..)
 
-import D3Elm.Path.Path exposing (..)
-import D3Elm.Common exposing (..)
+import ElmViz.Path.Path exposing (..)
+import ElmViz.Common exposing (..)
 
-import D3Elm.Voronoi.Common exposing (..)
-import D3Elm.Voronoi.Voronoi exposing (..)
+import ElmViz.Voronoi.Common exposing (..)
+import ElmViz.Voronoi.Voronoi exposing (..)
 
 import Voronoi.Data exposing (..)
 

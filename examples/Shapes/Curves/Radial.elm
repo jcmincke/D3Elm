@@ -9,9 +9,9 @@ import List as L exposing (..)
 
 import Basics exposing (..)
 
-import D3Elm.Common exposing (..)
-import D3Elm.Path.Path exposing (..)
-import D3Elm.Shapes.Curves.Radial exposing (..)
+import ElmViz.Common exposing (..)
+import ElmViz.Path.Path exposing (..)
+import ElmViz.Shapes.Curves.Radial exposing (..)
 
 
 main = mainHtml

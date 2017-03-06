@@ -10,8 +10,8 @@ import List as L exposing (..)
 import Logger as Logger exposing (..)
 --import Svg as S exposing (..)
 
-import D3Elm.Hierarchy.Tree.Tree exposing (..)
-import D3Elm.Hierarchy.Treemap.Treemap exposing (..)
+import ElmViz.Hierarchy.Tree.Tree exposing (..)
+import ElmViz.Hierarchy.Treemap.Treemap exposing (..)
 
 loggerConfig : Logger.Config a
 loggerConfig =

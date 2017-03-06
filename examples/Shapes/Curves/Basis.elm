@@ -8,8 +8,8 @@ import Dict as D exposing (..)
 import List as L exposing (..)
 
 
-import D3Elm.Path.Path exposing (..)
-import D3Elm.Shapes.Curves.Basis exposing (..)
+import ElmViz.Path.Path exposing (..)
+import ElmViz.Shapes.Curves.Basis exposing (..)
 
 
 main = mainHtml

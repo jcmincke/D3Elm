@@ -8,8 +8,8 @@ import List as L exposing (..)
 
 import Logger as Logger exposing (..)
 
-import D3Elm.Path.Path exposing (..)
-import D3Elm.Shapes.Sector exposing (..)
+import ElmViz.Path.Path exposing (..)
+import ElmViz.Shapes.Sector exposing (..)
 
 main = sectorHtml
 

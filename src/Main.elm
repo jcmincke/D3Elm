@@ -2,33 +2,33 @@ module Main exposing (main)
 
 import Html exposing (Html, button, div, text)
 
-import D3Elm.Geo.Merge
+import ElmViz.Geo.Merge
 
-import D3Elm.Hierarchy.Tree.Tree
-import D3Elm.Hierarchy.Treemap.Treemap
-import D3Elm.Path.Path
-import D3Elm.Shapes.Sector
-import D3Elm.Shapes.Pie
+import ElmViz.Hierarchy.Tree.Tree
+import ElmViz.Hierarchy.Treemap.Treemap
+import ElmViz.Path.Path
+import ElmViz.Shapes.Sector
+import ElmViz.Shapes.Pie
 
-import D3Elm.Shapes.Curves.Basis
-import D3Elm.Shapes.Curves.Linear
-import D3Elm.Shapes.Curves.Step
-import D3Elm.Shapes.Curves.Natural
-import D3Elm.Shapes.Curves.Cardinal
-import D3Elm.Shapes.Curves.Monotone
+import ElmViz.Shapes.Curves.Basis
+import ElmViz.Shapes.Curves.Linear
+import ElmViz.Shapes.Curves.Step
+import ElmViz.Shapes.Curves.Natural
+import ElmViz.Shapes.Curves.Cardinal
+import ElmViz.Shapes.Curves.Monotone
 
-import D3Elm.Geo.Math
-import D3Elm.Geo.Rotation
-import D3Elm.Geo.Interpolate
-import D3Elm.Geo.Graticule
+import ElmViz.Geo.Math
+import ElmViz.Geo.Rotation
+import ElmViz.Geo.Interpolate
+import ElmViz.Geo.Graticule
 
-import D3Elm.Geo.Transformation
-import D3Elm.Geo.Projection.Stereographic
-import D3Elm.Geo.Projection.Gnomonic
-import D3Elm.Geo.Projection.Orthographic
-import D3Elm.Geo.Rendering.Simple
-import D3Elm.Geo.Clip.Circle
-import D3Elm.Geo.Clip.Clip
+import ElmViz.Geo.Transformation
+import ElmViz.Geo.Projection.Stereographic
+import ElmViz.Geo.Projection.Gnomonic
+import ElmViz.Geo.Projection.Orthographic
+import ElmViz.Geo.Rendering.Simple
+import ElmViz.Geo.Clip.Circle
+import ElmViz.Geo.Clip.Clip
 
 
 

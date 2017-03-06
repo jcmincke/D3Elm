@@ -9,19 +9,19 @@ import List as L exposing (..)
 
 import GeoJson exposing (..)
 
-import D3Elm.Geo.Transformation exposing (..)
-import D3Elm.Geo.Common exposing (..)
-import D3Elm.Geo.Projection.Orthographic exposing (..)
-import D3Elm.Geo.Projection.Gnomonic exposing (..)
-import D3Elm.Geo.Projection.Stereographic exposing (..)
-import D3Elm.Geo.Graticule exposing (..)
-import D3Elm.Geo.Circle as C exposing (..)
-import D3Elm.Geo.Scale as S exposing (..)
-import D3Elm.Geo.Rotation as R exposing (..)
-import D3Elm.Geo.Clip.Clip exposing (..)
-import D3Elm.Geo.Rendering.Simple exposing (..)
+import ElmViz.Geo.Transformation exposing (..)
+import ElmViz.Geo.Common exposing (..)
+import ElmViz.Geo.Projection.Orthographic exposing (..)
+import ElmViz.Geo.Projection.Gnomonic exposing (..)
+import ElmViz.Geo.Projection.Stereographic exposing (..)
+import ElmViz.Geo.Graticule exposing (..)
+import ElmViz.Geo.Circle as C exposing (..)
+import ElmViz.Geo.Scale as S exposing (..)
+import ElmViz.Geo.Rotation as R exposing (..)
+import ElmViz.Geo.Clip.Clip exposing (..)
+import ElmViz.Geo.Rendering.Simple exposing (..)
 
-import D3Elm.Path.Path as P exposing (..)
+import ElmViz.Path.Path as P exposing (..)
 
 main = mainHtml polyGrat
 
@@ -39,9 +39,9 @@ grat =
 polyGrat : GeoJsonObject
 polyGrat =
   let conf = {
-    deltaLambda = pi/8
+    deltaLambda = pi/12
   , deltaPhi = pi/24
-  , lambdaRepeats = [-pi, -3*pi/4, -pi/2, -pi/4, 0, pi/4, pi/2, 3*pi/4]
+  , lambdaRepeats = mkList (-pi) pi [] 12 --, -3*pi/4, -pi/2, -pi/4, 0, pi/4, pi/2, 3*pi/4]
   , phiRepeats = [-pi/4, 0, pi/4]
   , nbParallelSteps = 10
   , nbMeridianSteps = 10
@@ -75,7 +75,7 @@ mainHtml obj0 =
       --tr = (R.rotate 0 0.1 0) >> stereographic >> (S.scale 10 10) >> (S.translate 100 100)
       geoTr = createTransformation tr
       geoTrr = createTransformation trr
-      clippingTr = createCircleClippingTransformation (pi/2-epsilon)
+      clippingTr = createCircleClippingTransformation (pi/3-epsilon)
       obj1 = (geoTrr obj0)
       mObj2 = clippingTr obj1
   in  case mObj2 of

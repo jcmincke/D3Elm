@@ -9,19 +9,19 @@ import List as L exposing (..)
 
 import GeoJson exposing (..)
 
-import D3Elm.Geo.Transformation exposing (..)
-import D3Elm.Geo.Common exposing (..)
-import D3Elm.Geo.Projection.Orthographic exposing (..)
-import D3Elm.Geo.Projection.Gnomonic exposing (..)
-import D3Elm.Geo.Projection.Stereographic exposing (..)
-import D3Elm.Geo.Graticule exposing (..)
-import D3Elm.Geo.Circle as C exposing (..)
-import D3Elm.Geo.Scale as S exposing (..)
-import D3Elm.Geo.Rotation as R exposing (..)
+import ElmViz.Geo.Transformation exposing (..)
+import ElmViz.Geo.Common exposing (..)
+import ElmViz.Geo.Projection.Orthographic exposing (..)
+import ElmViz.Geo.Projection.Gnomonic exposing (..)
+import ElmViz.Geo.Projection.Stereographic exposing (..)
+import ElmViz.Geo.Graticule exposing (..)
+import ElmViz.Geo.Circle as C exposing (..)
+import ElmViz.Geo.Scale as S exposing (..)
+import ElmViz.Geo.Rotation as R exposing (..)
 
-import D3Elm.Geo.Rendering.Simple exposing (..)
+import ElmViz.Geo.Rendering.Simple exposing (..)
 
-import D3Elm.Path.Path as P exposing (..)
+import ElmViz.Path.Path as P exposing (..)
 
 main = mainHtml
 

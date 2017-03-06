@@ -6,18 +6,18 @@ import Test exposing (..)
 import Test.Runner.Node exposing (run, TestProgram)
 import Json.Encode exposing (Value)
 
-import TestD3Elm.D3Elm.Hierarchy.Tree.Tree as Tree
-import TestD3Elm.D3Elm.Hierarchy.Cluster as Cluster
-import TestD3Elm.D3Elm.Hierarchy.Treemap.Treemap as Treemap
-import TestD3Elm.D3Elm.Shapes.Curves.Curves as Curves
-import TestD3Elm.D3Elm.Voronoi.Voronoi as Voronoi
-import TestD3Elm.D3Elm.Voronoi.Common as VoronoiCommon
-import TestD3Elm.D3Elm.Geo.Rotation as Rotation
-import TestD3Elm.D3Elm.Geo.Graticule as Graticule
-import TestD3Elm.D3Elm.Geo.Clip.Circle as Circle
-import TestD3Elm.D3Elm.Geo.Clip.Circle1 as Circle1
+import TestElmViz.ElmViz.Hierarchy.Tree.Tree as Tree
+import TestElmViz.ElmViz.Hierarchy.Cluster as Cluster
+import TestElmViz.ElmViz.Hierarchy.Treemap.Treemap as Treemap
+import TestElmViz.ElmViz.Shapes.Curves.Curves as Curves
+import TestElmViz.ElmViz.Voronoi.Voronoi as Voronoi
+import TestElmViz.ElmViz.Voronoi.Common as VoronoiCommon
+import TestElmViz.ElmViz.Geo.Rotation as Rotation
+import TestElmViz.ElmViz.Geo.Graticule as Graticule
+import TestElmViz.ElmViz.Geo.Clip.Circle as Circle
+import TestElmViz.ElmViz.Geo.Clip.Circle1 as Circle1
 
-import TestD3Elm.D3Elm.Misc.Test as Misc
+import TestElmViz.ElmViz.Misc.Test as Misc
 
 allTests : Test
 allTests =

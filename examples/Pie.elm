@@ -8,9 +8,9 @@ import Dict as D exposing (..)
 import List as L exposing (..)
 
 
-import D3Elm.Path.Path exposing (..)
-import D3Elm.Shapes.Sector exposing (..)
-import D3Elm.Shapes.Pie exposing (..)
+import ElmViz.Path.Path exposing (..)
+import ElmViz.Shapes.Sector exposing (..)
+import ElmViz.Shapes.Pie exposing (..)
 
 main = html
 

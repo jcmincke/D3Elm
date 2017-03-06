@@ -8,8 +8,8 @@ import List as L exposing (..)
 
 import Logger as Logger exposing (..)
 
-import D3Elm.Hierarchy.Tree.Tree exposing (..)
-import D3Elm.Hierarchy.Cluster exposing (..)
+import ElmViz.Hierarchy.Tree.Tree exposing (..)
+import ElmViz.Hierarchy.Cluster exposing (..)
 
 loggerConfig : Logger.Config a
 loggerConfig =
